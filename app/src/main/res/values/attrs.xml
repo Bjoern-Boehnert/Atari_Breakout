@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<resources>
+    <declare-styleable name="GamefieldView">
+        <attr name="ballColor" format="color" />
+        <attr name="brickColor" format="color" />
+        <attr name="paddleColor" format="color" />
+        <attr name="backgroundColor" format="color" />
+    </declare-styleable>
+</resources>
