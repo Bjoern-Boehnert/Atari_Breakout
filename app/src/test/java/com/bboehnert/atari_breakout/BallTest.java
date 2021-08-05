@@ -1,17 +1,10 @@
 package com.bboehnert.atari_breakout;
 
-import android.graphics.Color;
+import android.graphics.RectF;
 
-import com.bboehnert.atari_breakout.entites.Ball;
-
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-
-import androidx.annotation.ColorInt;
-
-import static org.junit.Assert.*;
 
 /**
  * Tests the methods of the Ball Class
@@ -30,5 +23,11 @@ public class BallTest {
 
 
         Assert.assertEquals(1.12345678910, 1.12345678910, delta);*/
+
+
+        RectF d = new RectF();
+        RectF f = new RectF();
+        d.intersect(f);
+
     }
 }

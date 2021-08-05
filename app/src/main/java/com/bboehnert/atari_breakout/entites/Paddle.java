@@ -3,8 +3,8 @@ package com.bboehnert.atari_breakout.entites;
 
 public class Paddle extends GameEntity {
 
-    public Paddle(float x, float y, float width, float height, int colorCode) {
-        super(x, y, width, height, colorCode);
+    public Paddle(float x, float y, float width, float height) {
+        super(x, y, width, height);
     }
 
     public void move(float x) {

@@ -10,85 +10,42 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.bboehnert.atari_breakout.entites.Brick;
+import com.bboehnert.atari_breakout.entites.DrawManager;
 import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.entites.Redrawable;
 
 public class GameBoardView extends View implements Redrawable {
 
-    private final int ballColor;
-    private final int brickColor;
-    private final int paddleColor;
-    private final int backgroundColor;
-
-    private GameBoard board;
     private String gameOverMessage = "Klick On Restart!";
+    private DrawManager drawManager;
 
-    public GameBoardView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        // Parsing of the Attributes in attrs.xml
-        TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.GameBoardView);
-        this.ballColor = typedArray.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
-        this.brickColor = typedArray.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
-        this.paddleColor = typedArray.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
-        this.backgroundColor = typedArray.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
-        typedArray.recycle();
+    public GameBoardView(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        drawManager = new DrawManager(context, attributeSet, this);
     }
-
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if (board == null) {
-            this.board = new GameBoard(right, bottom,
-                    ballColor,
-                    brickColor,
-                    paddleColor,
-                    this);
-            board.initComponents();
-        }
+        drawManager.getGameBoard().setWidth(right);
+        drawManager.getGameBoard().setHeight(bottom);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawColor(this.backgroundColor);
-        canvas.drawRect(board.getBall().getRectangle(), board.getBall().getPaint());
-        canvas.drawRect(board.getPaddle().getRectangle(), board.getPaddle().getPaint());
-        for (Brick brick : board.getBricks()) {
-            if (brick != null) {
-                canvas.drawRect(brick.getRectangle(), brick.getPaint());
-            }
+        drawManager.draw(canvas);
+
+        if (!drawManager.getGameBoard().isGameStarted()) {
+            drawManager.drawGameOver(canvas, this.gameOverMessage);
+            return;
         }
 
-        if (!board.isGameStarted()) {
-            showGameOverScreen(canvas, this.gameOverMessage);
-        }
-        board.checkBoundaries();
-    }
-
-    private void showGameOverScreen(Canvas canvas, String message) {
-        canvas.drawColor(this.backgroundColor);
-
-        Paint paint = new Paint();
-        paint.setTextSize(getWidth() / 8);
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setColor(Color.BLUE);
-        canvas.drawText(
-                message,
-                getWidth() / 2,
-                getHeight() / 2,
-                paint);
-
+        drawManager.updateGameState();
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        board.movePaddle(e.getX());
+        drawManager.getGameBoard().movePaddle(e.getX());
         return true;
-    }
-
-    public void startGame() {
-        board.restartGame();
-        invalidate();
     }
 
     @Override
@@ -98,7 +55,12 @@ public class GameBoardView extends View implements Redrawable {
 
     @Override
     public void drawGameOver(String message) {
-        this.gameOverMessage = message;
+        gameOverMessage = message;
+        invalidate();
+    }
+
+    public void startGame() {
+        drawManager.getGameBoard().restartGame();
         invalidate();
     }
 }

@@ -2,23 +2,25 @@ package com.bboehnert.atari_breakout.entites;
 
 public class GameBoard {
 
-    private final float width;
-    private final float height;
+    private float width;
+    private float height;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
-    private final int ballColor, brickColor, paddleColor;
     private final Redrawable redrawable;
     private boolean isStarted = false;
 
 
-    public GameBoard(int width, int height, int ballColor, int brickColor, int paddleColor, Redrawable redrawable) {
-        this.width = width;
-        this.height = height;
-        this.ballColor = ballColor;
-        this.brickColor = brickColor;
-        this.paddleColor = paddleColor;
+    public GameBoard(Redrawable redrawable) {
         this.redrawable = redrawable;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 
     public float getWidth() {
@@ -30,26 +32,24 @@ public class GameBoard {
     }
 
     public void initComponents() {
-        this.ball = initBall(ballColor);
-        this.bricks = initBricks(brickColor);
-        this.paddle = initPaddle(paddleColor);
+        this.ball = initBall();
+        this.bricks = initBricks();
+        this.paddle = initPaddle();
     }
 
-    private Ball initBall(int color) {
+    private Ball initBall() {
         return new Ball(width / 2,
                 height / 2,
-                width / 32,
-                color);
+                width / 32);
     }
 
-    private Paddle initPaddle(int color) {
+    private Paddle initPaddle() {
         float paddleHeight = height / 16;
         return new Paddle(
                 width / 3,
                 height - paddleHeight,
                 width / 3,
-                paddleHeight,
-                color);
+                paddleHeight);
     }
 
     private boolean isWin() {
@@ -79,7 +79,7 @@ public class GameBoard {
         return bricks[index].getRectangle().intersect(ball.getRectangle());
     }
 
-    public void checkBoundaries() {
+    public void doGameActions() {
 
         if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > width) {
             ball.reflectX();
@@ -115,7 +115,7 @@ public class GameBoard {
         redrawable.redraw();
     }
 
-    private Brick[] initBricks(int color) {
+    private Brick[] initBricks() {
         bricks = new Brick[24];
 
         float spacing = width / 256;
@@ -128,8 +128,7 @@ public class GameBoard {
                         (j * width / brickInRow),
                         i * height / 16,
                         width / brickInRow - spacing,
-                        height / 16 - spacing,
-                        color);
+                        height / 16 - spacing);
             }
         }
         return bricks;
