@@ -23,8 +23,6 @@ public class Paddle extends GameEntity {
         if (reflectionPercentage < 0) {
             reflectionPercentage = 0;
         }
-
-        System.out.println("Paddle: " + reflectionPercentage);
         return reflectionPercentage;
     }
 }
