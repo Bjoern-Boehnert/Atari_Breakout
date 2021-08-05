@@ -1,14 +1,19 @@
 package com.bboehnert.atari_breakout.entites;
 
+import java.util.Random;
+
 public class Ball extends GameEntity {
 
     public static final int STEP_SIZE = 10;
     private double dx, dy, speed;
 
-    public Ball(int x, int y, int size, int colorCode) {
+    public Ball(float x, float y, float size, int colorCode) {
         super(x, y, size, size, colorCode);
-        this.dx = 1; // Init with random later
-        this.dy = 1;
+
+        Random entryDirection = new Random();
+        int val = entryDirection.nextInt(360 - 0 + 1) + 0;
+        this.dx = Math.sin(val);
+        this.dy = Math.cos(val);
         this.speed = 1;
 
     }

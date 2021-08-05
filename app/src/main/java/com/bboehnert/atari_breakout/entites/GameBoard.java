@@ -2,12 +2,13 @@ package com.bboehnert.atari_breakout.entites;
 
 public class GameBoard {
 
-    private int width, height;
+    private final float width;
+    private final float height;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
     private final int ballColor, brickColor, paddleColor;
-    private Redrawable redrawable;
+    private final Redrawable redrawable;
     private boolean isStarted = false;
 
 
@@ -20,11 +21,11 @@ public class GameBoard {
         this.redrawable = redrawable;
     }
 
-    public int getWidth() {
+    public float getWidth() {
         return width;
     }
 
-    public int getHeight() {
+    public float getHeight() {
         return height;
     }
 
@@ -42,7 +43,7 @@ public class GameBoard {
     }
 
     private Paddle initPaddle(int color) {
-        int paddleHeight = height / 16;
+        float paddleHeight = height / 16;
         return new Paddle(
                 width / 3,
                 height - paddleHeight,
@@ -53,8 +54,8 @@ public class GameBoard {
 
     private boolean isWin() {
         boolean isWin = true;
-        for (int i = 0; i < bricks.length; i++) {
-            if (bricks[i] == null) {
+        for (Brick brick : bricks) {
+            if (brick == null) {
                 continue;
             } else {
                 isWin = false;
@@ -97,10 +98,12 @@ public class GameBoard {
 
         } else if (ball.getY() + ball.getWidth() > height) {
             // Game Over
+            isStarted = false;
             redrawable.drawGameOver("You lost!");
             return;
 
         } else if (isWin()) {
+            isStarted = false;
             redrawable.drawGameOver("You won!");
             return;
         }
@@ -115,7 +118,7 @@ public class GameBoard {
     private Brick[] initBricks(int color) {
         bricks = new Brick[24];
 
-        int spacing = width / 256;
+        float spacing = width / 256;
         int brickInRow = 8;
         int rowsCount = 3;
 
