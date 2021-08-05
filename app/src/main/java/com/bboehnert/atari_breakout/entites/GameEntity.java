@@ -3,13 +3,15 @@ package com.bboehnert.atari_breakout.entites;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
+import androidx.annotation.ColorInt;
+
 abstract class GameEntity {
     protected float x, y;
     private final float width, height;
     private final Paint paint;
     private final RectF rectangle;
 
-    public GameEntity(float x, float y, float width, float height, int colorCode) {
+    public GameEntity(float x, float y, float width, float height, @ColorInt int colorCode) {
         this.x = x;
         this.y = y;
         this.width = width;

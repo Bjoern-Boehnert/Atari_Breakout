@@ -5,23 +5,13 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.bboehnert.atari_breakout.entites.Ball;
-import com.bboehnert.atari_breakout.entites.Brick;
-import com.bboehnert.atari_breakout.entites.Paddle;
+import com.bboehnert.atari_breakout.entites.*;
 
-/*
-Reference: https://proandroiddev.com/android-draw-a-custom-view-ef79fe2ff54b
-OnMeasurement brauche ich nur, wenn ich die Layout Größe verändern will. Also gar nicht notwendig
-https://www.youtube.com/watch?v=fPkRz20TAbo Minute 1:18
- */
-
-public class GamefieldView extends View {
+public class GameBoardView extends View {
 
     private final int ballColor;
     private final int brickColor;
@@ -30,22 +20,20 @@ public class GamefieldView extends View {
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks = new Brick[24];
+    private boolean isInitialised;
+    private boolean isStarted;
 
-    public GamefieldView(Context context, AttributeSet attrs) {
+    public GameBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        // Parsing of the Atributes in attrs.xml
+        // Parsing of the Attributes in attrs.xml
         TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.GamefieldView);
         this.ballColor = typedArray.getColor(R.styleable.GamefieldView_ballColor, Color.BLUE);
         this.brickColor = typedArray.getInt(R.styleable.GamefieldView_brickColor, Color.RED);
         this.paddleColor = typedArray.getInt(R.styleable.GamefieldView_paddleColor, Color.GREEN);
         this.backgroundColor = typedArray.getInt(R.styleable.GamefieldView_backgroundColor, Color.GRAY);
         typedArray.recycle();
-
     }
-
-    private boolean isInitialised;
-    private boolean isStarted;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -53,7 +41,7 @@ public class GamefieldView extends View {
         canvas.drawColor(this.backgroundColor);
 
         if (!isInitialised) {
-            initComponents(canvas);
+            initComponents();
             isInitialised = true;
         }
 
@@ -85,7 +73,7 @@ public class GamefieldView extends View {
         } else if (ball.getRectangle().intersect(paddle.getRectangle())) {
             // Is reflected by paddle
             ball.reflectY();
-            float reflectingPos = paddle.getReflectFactor(ball.getX());
+            float reflectingPos = paddle.getReflectFactor(ball.getX() + ball.getWidth() / 2);
             ball.reflectByPaddle(reflectingPos);
 
         } else if (ball.getY() + ball.getWidth() > getHeight()) {
@@ -102,10 +90,10 @@ public class GamefieldView extends View {
         invalidate();
     }
 
-    private void initComponents(Canvas canvas) {
+    private void initComponents() {
         ball = new Ball(getWidth() / 2,
                 getHeight() / 2,
-                getWidth() / 16,
+                getWidth() / 32,
                 ballColor);
 
         int paddleHeight = getHeight() / 16;
@@ -132,14 +120,6 @@ public class GamefieldView extends View {
         }
     }
 
-    public void startGame() {
-        this.isStarted = true;
-        if (isInitialised) {
-            isInitialised = false;
-        }
-        invalidate();
-    }
-
     private void showGameOverScreen(Canvas canvas, String message) {
         canvas.drawColor(this.backgroundColor);
 
@@ -155,20 +135,34 @@ public class GamefieldView extends View {
 
     }
 
+    private void moveBall() {
+        ball.move();
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        // Jumping of the paddle
-        float xPos = e.getX() - paddle.getWidth() / 2;
-        if (xPos < 0 || xPos + paddle.getWidth() > getWidth()) {
-            return false;
-        }
 
-        paddle.move(xPos);
+        // Position the paddle always centrally
+        float xPos = e.getX() - paddle.getWidth() / 2;
+
+        if (xPos < 0) {
+            // Exceeds left limit
+            paddle.move(0);
+        } else if (xPos + paddle.getWidth() > getWidth()) {
+            // Exceeds Right limit
+            paddle.move(getWidth() - paddle.getWidth());
+        } else {
+            paddle.move(xPos);
+        }
         return true;
     }
 
-    private void moveBall() {
-        ball.move();
+    public void startGame() {
+        this.isStarted = true;
+        if (isInitialised) {
+            isInitialised = false;
+        }
+        invalidate();
     }
 
 }
