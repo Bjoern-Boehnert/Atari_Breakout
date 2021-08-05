@@ -8,20 +8,20 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.bboehnert.atari_breakout.entites.*;
 
-public class GameBoardView extends View {
+public class GameBoardView extends View implements Redrawable {
 
     private final int ballColor;
     private final int brickColor;
     private final int paddleColor;
     private final int backgroundColor;
-    private Ball ball;
-    private Paddle paddle;
-    private Brick[] bricks = new Brick[24];
-    private boolean isInitialised;
-    private boolean isStarted;
+
+    private GameBoard board;
+    private boolean isGameOver;
+    private String gameOverMessage;
 
     public GameBoardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,89 +35,34 @@ public class GameBoardView extends View {
         typedArray.recycle();
     }
 
+
     @Override
     protected void onDraw(Canvas canvas) {
 
+        if (board == null) {
+            this.board = new GameBoard(getWidth(), getHeight(), ballColor, brickColor, paddleColor, this);
+            board.initComponents();
+        }
+
         canvas.drawColor(this.backgroundColor);
-
-        if (!isInitialised) {
-            initComponents();
-            isInitialised = true;
-        }
-
-        canvas.drawRect(ball.getRectangle(), ball.getPaint());
-        canvas.drawRect(paddle.getRectangle(), paddle.getPaint());
-
-        boolean isWin = true;
-        for (int i = 0; i < bricks.length; i++) {
-            if (bricks[i] == null) {
-                continue;
-            } else if (bricks[i].getRectangle().intersect(ball.getRectangle())) {
-                bricks[i] = null;
-                ball.reflectY();
-            } else {
-                // Draw Brick
-                isWin = false;
-                canvas.drawRect(bricks[i].getRectangle(), bricks[i].getPaint());
+        canvas.drawRect(board.getBall().getRectangle(), board.getBall().getPaint());
+        canvas.drawRect(board.getPaddle().getRectangle(), board.getPaddle().getPaint());
+        for (Brick brick : board.getBricks()) {
+            if (brick != null) {
+                canvas.drawRect(brick.getRectangle(), brick.getPaint());
             }
         }
 
-        if (!isStarted) {
+        if (!board.isGameStarted()) {
             return;
         }
 
-        if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > getWidth()) {
-            ball.reflectX();
-        } else if (ball.getY() < 0) {
-            ball.reflectY();
-        } else if (ball.getRectangle().intersect(paddle.getRectangle())) {
-            // Is reflected by paddle
-            ball.reflectY();
-            float reflectingPos = paddle.getReflectFactor(ball.getX() + ball.getWidth() / 2);
-            ball.reflectByPaddle(reflectingPos);
+        board.checkBoundaries();
 
-        } else if (ball.getY() + ball.getWidth() > getHeight()) {
-            // Game Over
-            showGameOverScreen(canvas, "You lost!");
-            return;
-
-        } else if (isWin) {
-            showGameOverScreen(canvas, "You won!");
-            return;
+        if (isGameOver) {
+            showGameOverScreen(canvas, this.gameOverMessage);
         }
 
-        moveBall();
-        invalidate();
-    }
-
-    private void initComponents() {
-        ball = new Ball(getWidth() / 2,
-                getHeight() / 2,
-                getWidth() / 32,
-                ballColor);
-
-        int paddleHeight = getHeight() / 16;
-        paddle = new Paddle(
-                getWidth() / 3,
-                getHeight() - paddleHeight,
-                getWidth() / 3,
-                paddleHeight,
-                this.paddleColor);
-
-        int spacing = getWidth() / 256;
-        int brickInRow = 8;
-        int rowsCount = 3;
-
-        for (int i = 0; i < rowsCount; i++) {
-            for (int j = 0; j < bricks.length / rowsCount; j++) {
-                bricks[(i * brickInRow) + j] = new Brick(
-                        (j * getWidth() / brickInRow),
-                        i * getHeight() / 16,
-                        getWidth() / brickInRow - spacing,
-                        getHeight() / 16 - spacing,
-                        this.brickColor);
-            }
-        }
     }
 
     private void showGameOverScreen(Canvas canvas, String message) {
@@ -135,34 +80,27 @@ public class GameBoardView extends View {
 
     }
 
-    private void moveBall() {
-        ball.move();
-    }
-
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-
-        // Position the paddle always centrally
-        float xPos = e.getX() - paddle.getWidth() / 2;
-
-        if (xPos < 0) {
-            // Exceeds left limit
-            paddle.move(0);
-        } else if (xPos + paddle.getWidth() > getWidth()) {
-            // Exceeds Right limit
-            paddle.move(getWidth() - paddle.getWidth());
-        } else {
-            paddle.move(xPos);
-        }
+        board.movePaddle(e.getX());
         return true;
     }
 
     public void startGame() {
-        this.isStarted = true;
-        if (isInitialised) {
-            isInitialised = false;
-        }
+        this.isGameOver = false;
+        board.restartGame();
         invalidate();
     }
 
+    @Override
+    public void redraw() {
+        invalidate();
+    }
+
+    @Override
+    public void drawGameOver(String message) {
+        this.isGameOver = true;
+        this.gameOverMessage = message;
+        invalidate();
+    }
 }

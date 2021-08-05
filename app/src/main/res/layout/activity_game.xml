@@ -15,7 +15,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/returnButton"
-        app:layout_constraintTop_toBottomOf="@+id/gamefield" />
+        app:layout_constraintTop_toBottomOf="@+id/gameBoard" />
 
     <Button
         android:id="@+id/returnButton"
@@ -26,7 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/restartButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gamefield" />
+        app:layout_constraintTop_toBottomOf="@+id/gameBoard" />
 
     <com.bboehnert.atari_breakout.GameBoardView
         android:id="@+id/gameBoard"
