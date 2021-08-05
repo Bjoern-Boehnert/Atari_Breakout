@@ -67,8 +67,6 @@ public class GamefieldView extends View {
             } else if (bricks[i].getRectangle().intersect(ball.getRectangle())) {
                 bricks[i] = null;
                 ball.reflectY();
-                float reflectingPos = paddle.getReflectFactor(ball.getX());
-                ball.reflectByPaddle(reflectingPos);
             } else {
                 // Draw Brick
                 isWin = false;

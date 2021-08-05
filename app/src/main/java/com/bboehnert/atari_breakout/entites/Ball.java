@@ -30,6 +30,7 @@ public class Ball extends GameEntity {
 
     public void reflectByPaddle(float percentage) {
 
+
         // Only reflect, when edges been hit
         if (percentage >= 0.5) {
             this.dx = 1;

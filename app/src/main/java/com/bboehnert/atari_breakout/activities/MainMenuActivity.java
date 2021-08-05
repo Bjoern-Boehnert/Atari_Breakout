@@ -1,8 +1,10 @@
-package com.bboehnert.atari_breakout;
+package com.bboehnert.atari_breakout.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.bboehnert.atari_breakout.R;
 
 import androidx.appcompat.app.AppCompatActivity;
 
