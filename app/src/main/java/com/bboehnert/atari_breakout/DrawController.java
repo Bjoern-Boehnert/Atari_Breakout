@@ -74,10 +74,7 @@ public class DrawController {
 
     }
 
-
     public void draw(@NonNull Canvas canvas, boolean isGameOver) {
-
-
         canvas.drawPaint(backgroundPaint);
         drawBall(canvas,ballPaint);
         drawPaddle(canvas,paddlePaint);

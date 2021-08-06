@@ -28,20 +28,8 @@ abstract class GameEntity {
     }
 
     public boolean isIntersecting(GameEntity other) {
-
-        if (getX() + getWidth() >= other.getX() &&
-                getY() + getHeight() >= other.getY()) {
-
-            return true;
-
-        } else if (getX() + getWidth() >= other.getX() &&
-                getY() + getHeight() >= other.getY() + other.getHeight()) {
-
-            return true;
-        }
-        return false;
-
-
+        return x < other.x + other.width && other.x < width + x
+                && y < other.height + other.y && other.y < height + y;
     }
 
 }

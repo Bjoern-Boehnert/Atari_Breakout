@@ -52,15 +52,12 @@ public class GameBoard {
     }
 
     private boolean isWin() {
-        boolean isWin = true;
         for (Brick brick : bricks) {
-            if (brick == null) {
-                continue;
-            } else {
-                isWin = false;
+            if (brick != null) {
+                return false;
             }
         }
-        return isWin;
+        return true;
     }
 
     private boolean destroyBrick() {
@@ -79,11 +76,10 @@ public class GameBoard {
     }
 
     private boolean checkPaddleCollision() {
-        return ball.isIntersecting(paddle);
+        return paddle.isIntersecting(ball);
     }
 
     public void doGameActions() {
-
         if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > width) {
             ball.reflectX();
 
