@@ -5,10 +5,12 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 
-import com.bboehnert.atari_breakout.entites.Brick;
+import com.bboehnert.atari_breakout.entites.Ball;
 import com.bboehnert.atari_breakout.entites.GameBoard;
+import com.bboehnert.atari_breakout.entites.Paddle;
 
 import androidx.annotation.NonNull;
 
@@ -23,12 +25,15 @@ public class DrawController {
     private final Paint backgroundPaint;
     private String gameOverMessage;
 
-
+    private RectF[] bricksRects;
+    private RectF ballRect;
+    private RectF paddleRect;
 
     public DrawController(Context context, AttributeSet attrs, GameBoard board) {
         this.context = context;
         this.board = board;
         this.isGameOver = false;
+        bricksRects = new RectF[board.getBricks().length];
 
         // Parsing of the Attributes in attrs.xml
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.GameBoardView);
@@ -49,16 +54,37 @@ public class DrawController {
 
         backgroundPaint = new Paint();
         backgroundPaint.setColor(backgroundColor);
+
+        ballRect = new RectF(board.getBall().getX(),
+                board.getBall().getY(),
+                board.getBall().getX() + board.getBall().getWidth(),
+                board.getBall().getY() + board.getBall().getHeight());
+
+        paddleRect = new RectF(board.getPaddle().getX(),
+                board.getPaddle().getY(),
+                board.getPaddle().getX() + board.getPaddle().getWidth(),
+                board.getPaddle().getY() + board.getPaddle().getHeight());
+
+        for (int i = 0; i < bricksRects.length; i++) {
+            bricksRects[i] = new RectF(board.getBricks()[i].getX(),
+                    board.getBricks()[i].getY(),
+                    board.getBricks()[i].getX() + board.getBricks()[i].getWidth(),
+                    board.getBricks()[i].getY() + board.getBricks()[i].getHeight());
+        }
+
     }
 
 
     public void draw(@NonNull Canvas canvas, boolean isGameOver) {
+
+
         canvas.drawPaint(backgroundPaint);
-        canvas.drawRect(board.getBall().getRectangle(), ballPaint);
-        canvas.drawRect(board.getPaddle().getRectangle(), paddlePaint);
-        for (Brick brick : board.getBricks()) {
-            if (brick != null) {
-                canvas.drawRect(brick.getRectangle(), brickPaint);
+        drawBall(canvas,ballPaint);
+        drawPaddle(canvas,paddlePaint);
+
+        for (int i = 0; i < this.board.getBricks().length; i++) {
+            if (this.board.getBricks()[i] != null) {
+                canvas.drawRect(this.bricksRects[i], brickPaint);
             }
         }
 
@@ -66,6 +92,22 @@ public class DrawController {
             drawGameOverScreen(canvas, gameOverMessage);
         }
 
+    }
+
+    private void drawBall(Canvas canvas, Paint paint) {
+        Ball ball = board.getBall();
+        canvas.drawRect(ball.getX(),
+                ball.getY(),
+                ball.getX() + ball.getWidth(),
+                ball.getY() + ball.getHeight(), paint);
+    }
+
+    private void drawPaddle(Canvas canvas, Paint paint) {
+        Paddle paddle = board.getPaddle();
+        canvas.drawRect(paddle.getX(),
+                paddle.getY(),
+                paddle.getX() + paddle.getWidth(),
+                paddle.getY() + paddle.getHeight(), paint);
     }
 
     public void setGameOver(boolean value, String message) {
