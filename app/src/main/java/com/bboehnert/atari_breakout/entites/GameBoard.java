@@ -10,15 +10,9 @@ public class GameBoard {
     private final Redrawable redrawable;
     private boolean isStarted = false;
 
-    public GameBoard(Redrawable redrawable) {
+    public GameBoard(Redrawable redrawable, float width, float height) {
         this.redrawable = redrawable;
-    }
-
-    public void setWidth(float width) {
         this.width = width;
-    }
-
-    public void setHeight(float height) {
         this.height = height;
     }
 

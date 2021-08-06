@@ -1,17 +1,11 @@
 package com.bboehnert.atari_breakout;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.bboehnert.atari_breakout.entites.Brick;
-import com.bboehnert.atari_breakout.entites.DrawManager;
-import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.entites.Redrawable;
 
 public class GameBoardView extends View implements Redrawable {

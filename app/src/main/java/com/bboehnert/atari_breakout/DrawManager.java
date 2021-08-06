@@ -1,10 +1,11 @@
-package com.bboehnert.atari_breakout.entites;
+package com.bboehnert.atari_breakout;
 
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-import com.bboehnert.atari_breakout.DrawController;
+import com.bboehnert.atari_breakout.entites.GameBoard;
+import com.bboehnert.atari_breakout.entites.Redrawable;
 
 import androidx.annotation.NonNull;
 
@@ -22,9 +23,7 @@ public class DrawManager {
     }
 
     public void init(int width, int height) {
-        this.gameBoard = new GameBoard(redrawable);
-        gameBoard.setWidth(width);
-        gameBoard.setHeight(height);
+        this.gameBoard = new GameBoard(redrawable, width, height);
         gameBoard.initComponents();
         controller = new DrawController(context, attributeSet, gameBoard);
     }
@@ -34,7 +33,7 @@ public class DrawManager {
     }
 
     public void updateGameState() {
-        controller.redrawGameState();
+        controller.updateGameState();
     }
 
     public void draw(@NonNull Canvas canvas) {
