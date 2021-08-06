@@ -14,20 +14,19 @@ public class GameBoard {
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
-    private final Redrawable redrawable;
+    private Redrawable redrawable;
     private boolean isStarted = false;
 
-    /**
-     * Constructor
-     *
-     * @param redrawable for updating the UI
-     * @param width      the game boards total width
-     * @param height     the game boards total height
-     */
-    public GameBoard(Redrawable redrawable, float width, float height) {
-        this.redrawable = redrawable;
+    public void setWidth(float width) {
         this.width = width;
+    }
+
+    public void setHeight(float height) {
         this.height = height;
+    }
+
+    public void setRedrawable(Redrawable redrawable) {
+        this.redrawable = redrawable;
     }
 
     /**
@@ -100,9 +99,20 @@ public class GameBoard {
      * @return a action to be executed
      */
     public GameAction getCurrentAction() {
+
+        if (!isStarted) {
+            return null;
+        }
         GameAction action = null;
 
-        if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > width) {
+        if (isWin()) {
+            action = GameAction.GameWin;
+
+        } else if (ball.getY() + ball.getWidth() > height) {
+            // Game Over
+            action = GameAction.GameLose;
+
+        } else if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > width) {
             action = GameAction.X_Reflection;
 
         } else if (ball.getY() < 0 || isDestroyBrick()) {
@@ -113,13 +123,6 @@ public class GameBoard {
             action = GameAction.Y_Reflection;
             float reflectingPos = paddle.getReflectFactor(ball.getX() + ball.getWidth() / 2);
             ball.reflectByPaddle(reflectingPos);
-
-        } else if (ball.getY() + ball.getWidth() > height) {
-            // Game Over
-            action = GameAction.GameLose;
-
-        } else if (isWin()) {
-            action = GameAction.GameWin;
         }
         return action;
     }
@@ -130,6 +133,10 @@ public class GameBoard {
      * @param action to process
      */
     public void processAction(GameAction action) {
+
+        if (!isStarted) {
+            return;
+        }
 
         if (action != null) {
             if (action == GameAction.GameWin) {

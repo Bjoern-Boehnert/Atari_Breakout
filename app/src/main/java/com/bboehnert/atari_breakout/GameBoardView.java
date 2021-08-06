@@ -12,6 +12,7 @@ import com.bboehnert.atari_breakout.entites.Redrawable;
 
 /**
  * Class for handling user/game actions related to the game board
+ * Information source: https://javacodehouse.com/blog/mockito-tutorial/
  */
 public class GameBoardView extends View implements Redrawable {
 
@@ -35,8 +36,12 @@ public class GameBoardView extends View implements Redrawable {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         // Init game board width and height
         if (this.gameBoard == null) {
-            this.gameBoard = new GameBoard(this, right, bottom);
-            gameBoard.initComponents();
+
+            this.gameBoard = new GameBoard();
+            this.gameBoard.setWidth(right);
+            this.gameBoard.setHeight(bottom);
+            this.gameBoard.setRedrawable(this);
+            this.gameBoard.initComponents();
             drawController = new DrawController(colors, gameBoard);
         }
     }
