@@ -1,24 +1,14 @@
 package com.bboehnert.atari_breakout.entites;
 
-import android.graphics.Paint;
-import android.graphics.RectF;
-
-import androidx.annotation.ColorInt;
-
 abstract class GameEntity {
     protected float x, y;
     private final float width, height;
-    private final RectF rectangle;
 
     public GameEntity(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-
-        this.rectangle = new RectF(x, y,
-                x + width,
-                y + height);
     }
 
     public float getX() {
@@ -37,7 +27,21 @@ abstract class GameEntity {
         return height;
     }
 
-    public RectF getRectangle() {
-        return rectangle;
+    public boolean isIntersecting(GameEntity other) {
+
+        if (getX() + getWidth() >= other.getX() &&
+                getY() + getHeight() >= other.getY()) {
+
+            return true;
+
+        } else if (getX() + getWidth() >= other.getX() &&
+                getY() + getHeight() >= other.getY() + other.getHeight()) {
+
+            return true;
+        }
+        return false;
+
+
     }
+
 }

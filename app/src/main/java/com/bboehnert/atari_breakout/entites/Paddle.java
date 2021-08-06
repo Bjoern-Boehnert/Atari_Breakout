@@ -8,11 +8,8 @@ public class Paddle extends GameEntity {
     }
 
     public void move(float x) {
-
         this.x = x;
-        getRectangle().set(x, this.y,
-                x + getWidth(),
-                this.y + getHeight());
+
     }
 
     public float getReflectFactor(float xPos) {

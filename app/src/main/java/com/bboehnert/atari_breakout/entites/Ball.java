@@ -16,10 +16,6 @@ public class Ball extends GameEntity {
     public void move() {
         this.x += STEP_SIZE * dx * speed;
         this.y += STEP_SIZE * dy;
-
-        getRectangle().set(x, y,
-                x + getWidth(),
-                y + getWidth());
     }
 
     public void reflectX() {

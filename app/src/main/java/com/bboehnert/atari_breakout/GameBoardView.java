@@ -26,8 +26,7 @@ public class GameBoardView extends View implements Redrawable {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        drawManager.getGameBoard().setWidth(right);
-        drawManager.getGameBoard().setHeight(bottom);
+        drawManager.init(right, bottom);
     }
 
     @Override

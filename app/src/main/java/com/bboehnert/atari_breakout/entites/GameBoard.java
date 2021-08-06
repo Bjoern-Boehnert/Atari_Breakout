@@ -10,7 +10,6 @@ public class GameBoard {
     private final Redrawable redrawable;
     private boolean isStarted = false;
 
-
     public GameBoard(Redrawable redrawable) {
         this.redrawable = redrawable;
     }
@@ -76,7 +75,11 @@ public class GameBoard {
     }
 
     private boolean checkBrickCollision(int index) {
-        return bricks[index].getRectangle().intersect(ball.getRectangle());
+        return bricks[index].isIntersecting(ball);
+    }
+
+    private boolean checkPaddleCollision() {
+        return ball.isIntersecting(paddle);
     }
 
     public void doGameActions() {
@@ -87,7 +90,7 @@ public class GameBoard {
         } else if (ball.getY() < 0) {
             ball.reflectY();
 
-        } else if (ball.getRectangle().intersect(paddle.getRectangle())) {
+        } else if (checkPaddleCollision()) {
             // Is reflected by paddle
             ball.reflectY();
             float reflectingPos = paddle.getReflectFactor(ball.getX() + ball.getWidth() / 2);
