@@ -30,6 +30,7 @@
 
     <com.bboehnert.atari_breakout.GameBoardView
         android:id="@+id/gameBoard"
+        app:ballColor="@color/black"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/restartButton"

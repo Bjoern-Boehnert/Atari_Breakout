@@ -1,43 +1,60 @@
 package com.bboehnert.atari_breakout;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.entites.Redrawable;
 
+/**
+ * Class for handling user/game actions related to the game board
+ */
 public class GameBoardView extends View implements Redrawable {
 
-    private String gameOverMessage = "Klick On Restart!";
-    private DrawManager drawManager;
+    private String gameOverMessage = "Neustart klicken!";
+    private DrawController drawController;
+    private GameBoard gameBoard;
+    private final TypedArray colors;
 
+    /**
+     * Constructor
+     *
+     * @param context      of the app
+     * @param attributeSet for getting the component custom colors
+     */
     public GameBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        drawManager = new DrawManager(context, attributeSet, this);
+        this.colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
     }
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        drawManager.init(right, bottom);
+        // Init game board width and height
+        if (this.gameBoard == null) {
+            this.gameBoard = new GameBoard(this, right, bottom);
+            gameBoard.initComponents();
+            drawController = new DrawController(colors, gameBoard);
+        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        drawManager.draw(canvas);
+        drawController.drawGameObjects(canvas);
 
-        if (!drawManager.getGameBoard().isGameStarted()) {
-            drawManager.drawGameOver(canvas, this.gameOverMessage);
+        if (!gameBoard.isGameStarted()) {
+            drawController.drawGameOverScreen(canvas, this.gameOverMessage);
             return;
         }
-
-        drawManager.updateGameState();
+        drawController.processAction(gameBoard.getCurrentAction());
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        drawManager.getGameBoard().movePaddle(e.getX());
+        gameBoard.movePaddle(e.getX());
         return true;
     }
 
@@ -52,8 +69,11 @@ public class GameBoardView extends View implements Redrawable {
         invalidate();
     }
 
+    /**
+     * Starting the game and initiate drawing
+     */
     public void startGame() {
-        drawManager.getGameBoard().restartGame();
+        gameBoard.restartGame();
         invalidate();
     }
 }

@@ -1,42 +1,43 @@
 package com.bboehnert.atari_breakout;
 
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
-import android.util.AttributeSet;
 
 import com.bboehnert.atari_breakout.entites.Ball;
 import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.entites.Paddle;
 
+/**
+ * Controller for handling all draw events for the game
+ */
 class DrawController {
 
-    private boolean isGameOver;
-    private Context context;
     private GameBoard board;
     private final Paint ballPaint;
     private final Paint brickPaint;
     private final Paint paddlePaint;
     private final Paint backgroundPaint;
-    private String gameOverMessage;
 
-    private RectF[] bricksRects;
+    private final RectF[] bricksRects;
 
-    public DrawController(Context context, AttributeSet attrs, GameBoard board) {
-        this.context = context;
+    /**
+     * Constructor
+     *
+     * @param colors of the game entities
+     * @param board  is the game board
+     */
+    public DrawController(TypedArray colors, GameBoard board) {
         this.board = board;
-        this.isGameOver = false;
 
         // Parsing of the Attributes in gameBoard_Attributes.xml
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.GameBoardView);
-        int ballColor = typedArray.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
-        int brickColor = typedArray.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
-        int paddleColor = typedArray.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
-        int backgroundColor = typedArray.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
-        typedArray.recycle();
+        int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
+        int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
+        int brickColor = colors.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
+        int paddleColor = colors.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
+        colors.recycle();
 
         ballPaint = new Paint();
         ballPaint.setColor(ballColor);
@@ -61,50 +62,50 @@ class DrawController {
 
     }
 
-    public void draw(Canvas canvas, boolean isGameOver) {
+    /**
+     * Draw the paddle, bricks and ball on the canvas
+     *
+     * @param canvas to draw the game objects
+     */
+    public void drawGameObjects(Canvas canvas) {
         canvas.drawPaint(backgroundPaint);
-        drawBall(canvas, ballPaint);
-        drawPaddle(canvas, paddlePaint);
+
+        Ball ball = board.getBall();
+        canvas.drawRect(ball.getX(),
+                ball.getY(),
+                ball.getX() + ball.getWidth(),
+                ball.getY() + ball.getHeight(),
+                ballPaint);
+
+        Paddle paddle = board.getPaddle();
+        canvas.drawRect(paddle.getX(),
+                paddle.getY(),
+                paddle.getX() + paddle.getWidth(),
+                paddle.getY() + paddle.getHeight(),
+                paddlePaint);
 
         for (int i = 0; i < this.board.getBricks().length; i++) {
             if (this.board.getBricks()[i] != null) {
                 canvas.drawRect(this.bricksRects[i], brickPaint);
             }
         }
-
-        if (isGameOver) {
-            drawGameOverScreen(canvas, gameOverMessage);
-        }
-
     }
 
-    private void drawBall(Canvas canvas, Paint paint) {
-        Ball ball = board.getBall();
-        canvas.drawRect(ball.getX(),
-                ball.getY(),
-                ball.getX() + ball.getWidth(),
-                ball.getY() + ball.getHeight(),
-                paint);
+    /**
+     * Progress the game one cycle forward for the behavioral action to execute
+     *
+     * @param action to execute on the board
+     */
+    public void processAction(GameBoard.GameAction action) {
+        board.processAction(action);
     }
 
-    private void drawPaddle(Canvas canvas, Paint paint) {
-        Paddle paddle = board.getPaddle();
-        canvas.drawRect(paddle.getX(),
-                paddle.getY(),
-                paddle.getX() + paddle.getWidth(),
-                paddle.getY() + paddle.getHeight(),
-                paint);
-    }
-
-    public void setGameOver(boolean value, String message) {
-        this.isGameOver = value;
-        this.gameOverMessage = message;
-    }
-
-    public void updateGameState() {
-        board.doGameActions();
-    }
-
+    /**
+     * Draw the Game Over Screen with the desired message
+     *
+     * @param canvas  to draw the game over
+     * @param message is the text on finished game
+     */
     public void drawGameOverScreen(Canvas canvas, String message) {
         canvas.drawPaint(backgroundPaint);
 
@@ -117,7 +118,6 @@ class DrawController {
                 board.getWidth() / 2,
                 board.getHeight() / 2,
                 paint);
-
     }
 
 }
