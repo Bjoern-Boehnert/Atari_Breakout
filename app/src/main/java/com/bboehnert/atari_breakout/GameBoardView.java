@@ -54,9 +54,14 @@ public class GameBoardView extends View implements DrawListener {
             return;
         }
 
+        // Draw game obj
         DrawController.drawGameObjects(canvas);
+        DrawController.drawGameScore(canvas);
+
         GameBoard.GameAction action = board.getCurrentAction();
         board.processAction(action);
+
+        // Get Game Over Message
         this.message = getMessage(action);
 
     }
@@ -79,5 +84,6 @@ public class GameBoardView extends View implements DrawListener {
     public void redraw() {
         invalidate();
     }
+
 
 }

@@ -13,13 +13,14 @@ public class GameBoard {
 
     }
 
-    private  float width, height;
+    private float width, height;
     private DrawListener drawListener;
     private AudioListener audioListener;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
-    private boolean isStarted, isFinished = false;
+    private boolean isStarted = false;
+    private int gameScore;
 
     /**
      * Setter for the width
@@ -77,18 +78,23 @@ public class GameBoard {
                 paddleHeight);
 
         // Init Bricks
-        float spacing = width / 256;
-        int brickInRow = 8;
-        int rowsCount = 3;
+        int brickInRow = 6;
+        int rowsCount = 4;
 
-        bricks = new Brick[24];
+        float spacing = width / 256;
+        float margin = width / 3;
+        float brickWidth = width / brickInRow - margin / brickInRow;
+        float brickHeight = height / 8 - margin / rowsCount;
+
+
+        bricks = new Brick[rowsCount * brickInRow];
         for (int i = 0; i < rowsCount; i++) {
             for (int j = 0; j < bricks.length / rowsCount; j++) {
                 bricks[(i * brickInRow) + j] = new Brick(
-                        (j * width / brickInRow),
-                        i * height / 16,
-                        width / brickInRow - spacing,
-                        height / 16 - spacing);
+                        j * brickWidth + margin / 2,
+                        i * brickHeight + margin,
+                        brickWidth - spacing,
+                        brickHeight - spacing);
             }
         }
         drawListener.redraw();
@@ -115,8 +121,6 @@ public class GameBoard {
         for (int i = 0; i < bricks.length; i++) {
             if (bricks[i] != null && bricks[i].isIntersecting(ball)) {
                 bricks[i] = null;
-
-                audioListener.playBrickCollision();
                 return true;
             }
         }
@@ -145,8 +149,13 @@ public class GameBoard {
         } else if (ball.getX() < 0 || (ball.getX() + ball.getWidth()) > width) {
             action = GameAction.X_Reflection;
 
-        } else if (ball.getY() < 0 || isDestroyBrick()) {
+        } else if (ball.getY() < 0) {
             action = GameAction.Y_Reflection;
+
+        } else if (isDestroyBrick()) {
+            action = GameAction.Y_Reflection;
+            gameScore++;
+            audioListener.playBrickCollision();
 
         } else if (paddle.isIntersecting(ball)) {
             // Is reflected by paddle
@@ -174,11 +183,9 @@ public class GameBoard {
         if (action != null) {
             if (action == GameAction.GameWin) {
                 isStarted = false;
-                isFinished = true;
 
             } else if (action == GameAction.GameLose) {
                 isStarted = false;
-                isFinished = true;
 
             } else if (action == GameAction.X_Reflection) {
                 ball.reflectX();
@@ -218,7 +225,7 @@ public class GameBoard {
      */
     public void restartGame() {
         isStarted = true;
-        isFinished = false;
+        gameScore = 0;
         initComponents();
     }
 
@@ -276,5 +283,12 @@ public class GameBoard {
         return height;
     }
 
-
+    /**
+     * Getter for the score of the game
+     *
+     * @return a value about the game score
+     */
+    public int getGameScore() {
+        return gameScore;
+    }
 }

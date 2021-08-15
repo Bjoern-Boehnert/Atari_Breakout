@@ -80,6 +80,24 @@ public final class DrawController {
     }
 
     /**
+     * Draw the game score
+     *
+     * @param canvas to draw the game objects
+     */
+    public static void drawGameScore(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setTextSize(board.getWidth() / 16);
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setColor(Color.BLACK);
+        canvas.drawText(
+                "Score: " + board.getGameScore(),
+                board.getWidth() / 8,
+                board.getWidth() / 8,
+                paint);
+
+    }
+
+    /**
      * Draw the Game Over Screen with the desired message
      *
      * @param canvas  to draw the game over
