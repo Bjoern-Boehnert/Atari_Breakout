@@ -14,8 +14,6 @@ import com.bboehnert.atari_breakout.entites.GameBoard;
 public class GameBoardView extends View implements DrawListener {
 
     private final TypedArray colors;
-    private final DrawController drawController;
-    private final SoundController soundController;
     private GameBoard board;
     private String message;
 
@@ -29,10 +27,7 @@ public class GameBoardView extends View implements DrawListener {
         super(context, attributeSet);
         this.message = getResources().getString(R.string.gameNotStartedMessage);
         this.colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
-        this.drawController = new DrawController(colors);
-
-        this.soundController = new SoundController(context);
-        this.soundController.initAudio();
+        DrawController.setColors(colors);
     }
 
     /**
@@ -44,23 +39,22 @@ public class GameBoardView extends View implements DrawListener {
         this.board = board;
         this.board.setDrawer(this);
         this.board.initComponents();
-        this.drawController.setBoard(board);
-        this.soundController.register(board);
+        DrawController.setBoard(board);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (drawController.getBoard() == null) {
+        if (DrawController.getBoard() == null) {
             return;
         }
 
         // Show Game Over
         if (!board.isGameStarted()) {
-            drawController.drawGameOverScreen(canvas, this.message);
+            DrawController.drawGameOverScreen(canvas, this.message);
             return;
         }
 
-        drawController.drawGameObjects(canvas);
+        DrawController.drawGameObjects(canvas);
         GameBoard.GameAction action = board.getCurrentAction();
         board.processAction(action);
         this.message = getMessage(action);

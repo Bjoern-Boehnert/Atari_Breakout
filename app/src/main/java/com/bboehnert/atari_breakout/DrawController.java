@@ -12,20 +12,20 @@ import com.bboehnert.atari_breakout.entites.Paddle;
 /**
  * Controller for handling all draw events for the game
  */
-class DrawController {
+public final class DrawController {
 
-    private GameBoard board;
-    private final Paint ballPaint;
-    private final Paint brickPaint;
-    private final Paint paddlePaint;
-    private final Paint backgroundPaint;
+    private static GameBoard board;
+    private static Paint ballPaint;
+    private static Paint brickPaint;
+    private static Paint paddlePaint;
+    private static Paint backgroundPaint;
 
     /**
-     * Constructor
+     * Setter for colors
      *
      * @param colors of the game entities
      */
-    public DrawController(TypedArray colors) {
+    public static void setColors(TypedArray colors) {
         // Parsing of the Attributes in gameBoard_Attributes.xml
         int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
         int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
@@ -51,7 +51,7 @@ class DrawController {
      *
      * @param canvas to draw the game objects
      */
-    public void drawGameObjects(Canvas canvas) {
+    public static void drawGameObjects(Canvas canvas) {
         canvas.drawPaint(backgroundPaint);
 
         Ball ball = board.getBall();
@@ -68,8 +68,8 @@ class DrawController {
                 paddle.getY() + paddle.getHeight(),
                 paddlePaint);
 
-        for (int i = 0; i < this.board.getBricks().length; i++) {
-            if (this.board.getBricks()[i] != null) {
+        for (int i = 0; i < board.getBricks().length; i++) {
+            if (board.getBricks()[i] != null) {
                 canvas.drawRect(board.getBricks()[i].getX(),
                         board.getBricks()[i].getY(),
                         board.getBricks()[i].getX() + board.getBricks()[i].getWidth(),
@@ -85,7 +85,7 @@ class DrawController {
      * @param canvas  to draw the game over
      * @param message is the text on finished game
      */
-    public void drawGameOverScreen(Canvas canvas, String message) {
+    public static void drawGameOverScreen(Canvas canvas, String message) {
         canvas.drawPaint(backgroundPaint);
 
         Paint paint = new Paint();
@@ -102,10 +102,10 @@ class DrawController {
     /**
      * Setter for the board
      *
-     * @param board is the game board
+     * @param gameBoard is the game board
      */
-    public void setBoard(GameBoard board) {
-        this.board = board;
+    public static void setBoard(GameBoard gameBoard) {
+        board = gameBoard;
     }
 
     /**
@@ -113,7 +113,7 @@ class DrawController {
      *
      * @return board is the game board
      */
-    public GameBoard getBoard() {
+    public static GameBoard getBoard() {
         return board;
     }
 }

@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.bboehnert.atari_breakout.GameBoardView;
 import com.bboehnert.atari_breakout.R;
+import com.bboehnert.atari_breakout.SoundController;
 import com.bboehnert.atari_breakout.entites.GameBoard;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,11 +20,13 @@ public class GameActivity extends AppCompatActivity {
     private GameBoardView view;
     private GameBoard board;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         this.view = findViewById(R.id.gameBoard);
+
     }
 
     /**
@@ -33,6 +36,8 @@ public class GameActivity extends AppCompatActivity {
      * @param view is the View
      */
     public void restartGameButtonPressed(View view) {
+        SoundController.release();
+        SoundController.initAudio(this);
         board.restartGame();
     }
 
@@ -59,6 +64,9 @@ public class GameActivity extends AppCompatActivity {
             this.board.setHeight(view.getHeight());
             this.board.setWidth(view.getWidth());
             this.view.initBoard(board);
+
+            this.board.setAudioPlayer(new SoundController());
+
         }
     }
 }
