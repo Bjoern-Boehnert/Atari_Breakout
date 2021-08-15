@@ -3,62 +3,20 @@ package com.bboehnert.atari_breakout.entites;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doAnswer;
 
 /**
  * Class for testing the Game board
  */
 
 public class GameBoardTest {
-    @Mock
-    private Redrawable redrawable;
 
-    @InjectMocks
     private GameBoard gameBoard;
     private final double delta = 1e-5;
-    private boolean isRedrawn, isGameOverScreen;
-    private String message;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        gameBoard = new GameBoard();
-        gameBoard.setWidth(800);
-        gameBoard.setHeight(640);
-        gameBoard.setRedrawable(redrawable);
+        gameBoard = new GameBoard(800, 640);
         gameBoard.initComponents();
-        isRedrawn = false;
-        isGameOverScreen = false;
-        message = null;
-
-        // Mock void Methods - Interface Methods
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-                isRedrawn = true;
-                return null;
-            }
-
-        }).when(redrawable).redraw();
-
-        doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
-
-                message = (String) invocation.getArguments()[0];
-                isGameOverScreen = true;
-                return null;
-            }
-
-        }).when(redrawable).drawGameOver(any(String.class));
-
     }
 
     /**
@@ -141,11 +99,9 @@ public class GameBoardTest {
         float ballX = gameBoard.getBall().getX();
         gameBoard.processAction(null);
         Assert.assertEquals(ballX, gameBoard.getBall().getX(), delta);
-        Assert.assertFalse(this.isRedrawn);
 
         gameBoard.restartGame();
         gameBoard.processAction(null);
-        Assert.assertTrue(this.isRedrawn);
         Assert.assertNotEquals(ballX, gameBoard.getBall().getX(), delta);
 
         // X-Reflection
@@ -169,12 +125,10 @@ public class GameBoardTest {
         gameBoard.restartGame();
 
         // GameWin
-        Assert.assertFalse(this.isGameOverScreen);
         Assert.assertTrue(this.gameBoard.isGameStarted());
         gameBoard.processAction(GameBoard.GameAction.GameWin);
         Assert.assertFalse(this.gameBoard.isGameStarted());
-        Assert.assertTrue(this.isGameOverScreen);
-        Assert.assertNotNull(message);
+
     }
 
     /**
@@ -185,11 +139,8 @@ public class GameBoardTest {
         gameBoard.restartGame();
 
         // GameWin
-        Assert.assertFalse(this.isGameOverScreen);
         Assert.assertTrue(this.gameBoard.isGameStarted());
         gameBoard.processAction(GameBoard.GameAction.GameLose);
         Assert.assertFalse(this.gameBoard.isGameStarted());
-        Assert.assertTrue(this.isGameOverScreen);
-        Assert.assertNotNull(message);
     }
 }

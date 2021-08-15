@@ -4,7 +4,6 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.RectF;
 
 import com.bboehnert.atari_breakout.entites.Ball;
 import com.bboehnert.atari_breakout.entites.GameBoard;
@@ -21,17 +20,12 @@ class DrawController {
     private final Paint paddlePaint;
     private final Paint backgroundPaint;
 
-    private final RectF[] bricksRects;
-
     /**
      * Constructor
      *
      * @param colors of the game entities
-     * @param board  is the game board
      */
-    public DrawController(TypedArray colors, GameBoard board) {
-        this.board = board;
-
+    public DrawController(TypedArray colors) {
         // Parsing of the Attributes in gameBoard_Attributes.xml
         int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
         int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
@@ -50,16 +44,6 @@ class DrawController {
 
         backgroundPaint = new Paint();
         backgroundPaint.setColor(backgroundColor);
-
-        bricksRects = new RectF[board.getBricks().length];
-
-        for (int i = 0; i < bricksRects.length; i++) {
-            bricksRects[i] = new RectF(board.getBricks()[i].getX(),
-                    board.getBricks()[i].getY(),
-                    board.getBricks()[i].getX() + board.getBricks()[i].getWidth(),
-                    board.getBricks()[i].getY() + board.getBricks()[i].getHeight());
-        }
-
     }
 
     /**
@@ -86,18 +70,13 @@ class DrawController {
 
         for (int i = 0; i < this.board.getBricks().length; i++) {
             if (this.board.getBricks()[i] != null) {
-                canvas.drawRect(this.bricksRects[i], brickPaint);
+                canvas.drawRect(board.getBricks()[i].getX(),
+                        board.getBricks()[i].getY(),
+                        board.getBricks()[i].getX() + board.getBricks()[i].getWidth(),
+                        board.getBricks()[i].getY() + board.getBricks()[i].getHeight(),
+                        brickPaint);
             }
         }
-    }
-
-    /**
-     * Progress the game one cycle forward for the behavioral action to execute
-     *
-     * @param action to execute on the board
-     */
-    public void processAction(GameBoard.GameAction action) {
-        board.processAction(action);
     }
 
     /**
@@ -120,4 +99,21 @@ class DrawController {
                 paint);
     }
 
+    /**
+     * Setter for the board
+     *
+     * @param board is the game board
+     */
+    public void setBoard(GameBoard board) {
+        this.board = board;
+    }
+
+    /**
+     * Getter for the board
+     *
+     * @return board is the game board
+     */
+    public GameBoard getBoard() {
+        return board;
+    }
 }

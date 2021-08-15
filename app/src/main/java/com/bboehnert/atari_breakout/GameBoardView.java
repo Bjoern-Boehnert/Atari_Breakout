@@ -4,22 +4,22 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.bboehnert.atari_breakout.entites.GameBoard;
-import com.bboehnert.atari_breakout.entites.Redrawable;
+
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Class for handling user/game actions related to the game board
- * Information source: https://javacodehouse.com/blog/mockito-tutorial/
  */
-public class GameBoardView extends View implements Redrawable {
+public class GameBoardView extends View implements Observer {
 
-    private String gameOverMessage = "Neustart klicken!";
-    private DrawController drawController;
-    private GameBoard gameBoard;
     private final TypedArray colors;
+    private final DrawController drawController;
+    private GameBoard board;
+    private String message;
 
     /**
      * Constructor
@@ -29,56 +29,58 @@ public class GameBoardView extends View implements Redrawable {
      */
     public GameBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+        this.message = getResources().getString(R.string.gameNotStartedMessage);
         this.colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
+        this.drawController = new DrawController(colors);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        // Init game board width and height
-        if (this.gameBoard == null) {
-
-            this.gameBoard = new GameBoard();
-            this.gameBoard.setWidth(right);
-            this.gameBoard.setHeight(bottom);
-            this.gameBoard.setRedrawable(this);
-            this.gameBoard.initComponents();
-            drawController = new DrawController(colors, gameBoard);
-        }
+    /**
+     * Init the board and drawer
+     *
+     * @param board is the game board
+     */
+    public void initBoard(GameBoard board) {
+        this.board = board;
+        this.board.addObserver(this);
+        this.board.initComponents();
+        this.drawController.setBoard(board);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        drawController.drawGameObjects(canvas);
-
-        if (!gameBoard.isGameStarted()) {
-            drawController.drawGameOverScreen(canvas, this.gameOverMessage);
+        if (drawController.getBoard() == null) {
             return;
         }
-        drawController.processAction(gameBoard.getCurrentAction());
-    }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-        gameBoard.movePaddle(e.getX());
-        return true;
-    }
+        if (!board.isGameStarted()) {
+            drawController.drawGameOverScreen(canvas, this.message);
+            return;
+        }
 
-    @Override
-    public void redraw() {
-        invalidate();
-    }
+        drawController.drawGameObjects(canvas);
+        GameBoard.GameAction action = board.getCurrentAction();
+        board.processAction(action);
+        this.message = getMessage(action);
 
-    @Override
-    public void drawGameOver(String message) {
-        gameOverMessage = message;
-        invalidate();
     }
 
     /**
-     * Starting the game and initiate drawing
+     * Get the text of the action
+     *
+     * @param action is the current game board action
      */
-    public void startGame() {
-        gameBoard.restartGame();
+    private String getMessage(GameBoard.GameAction action) {
+        if (action == GameBoard.GameAction.GameWin) {
+            return getResources().getString(R.string.gameWonMessage);
+        } else if (action == GameBoard.GameAction.GameLose) {
+            return getResources().getString(R.string.gameLostMessage);
+        }
+        return null;
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
         invalidate();
     }
+
 }

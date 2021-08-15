@@ -19,7 +19,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:text="start game"
+        android:text="@string/buttonText_StartGame"
         android:onClick="onStartGameButtonClick"/>
 
 </LinearLayout>

@@ -1,32 +1,33 @@
 package com.bboehnert.atari_breakout.entites;
 
+import java.util.Observable;
+
 /**
  * Class that represents the game board with it's entities
  */
-public class GameBoard {
+public class GameBoard extends Observable {
 
     public enum GameAction {
         X_Reflection, Y_Reflection, GameWin, GameLose;
+
     }
 
-    private float width;
-    private float height;
+    private final float width;
+    private final float height;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
-    private Redrawable redrawable;
     private boolean isStarted = false;
 
-    public void setWidth(float width) {
+    /**
+     * Constructor
+     *
+     * @param width  is the game board width
+     * @param height is the game board height
+     */
+    public GameBoard(float width, float height) {
         this.width = width;
-    }
-
-    public void setHeight(float height) {
         this.height = height;
-    }
-
-    public void setRedrawable(Redrawable redrawable) {
-        this.redrawable = redrawable;
     }
 
     /**
@@ -63,7 +64,8 @@ public class GameBoard {
                         height / 16 - spacing);
             }
         }
-
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -141,13 +143,9 @@ public class GameBoard {
         if (action != null) {
             if (action == GameAction.GameWin) {
                 isStarted = false;
-                redrawable.drawGameOver("You won!");
-                return;
 
             } else if (action == GameAction.GameLose) {
                 isStarted = false;
-                redrawable.drawGameOver("You lost!");
-                return;
 
             } else if (action == GameAction.X_Reflection) {
                 ball.reflectX();
@@ -157,7 +155,8 @@ public class GameBoard {
             }
         }
         ball.move();
-        redrawable.redraw();
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -179,7 +178,8 @@ public class GameBoard {
         } else {
             paddle.move(xPos);
         }
-        redrawable.redraw();
+        setChanged();
+        notifyObservers();
     }
 
     /**
@@ -243,4 +243,5 @@ public class GameBoard {
     public float getHeight() {
         return height;
     }
+
 }

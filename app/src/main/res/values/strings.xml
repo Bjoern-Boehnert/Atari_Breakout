@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Atari Breakout</string>
+    <string name="gameWonMessage">You won!</string>
+    <string name="gameLostMessage">You lost!</string>
+    <string name="gameNotStartedMessage">Click Restart!</string>
+    <string name="buttonText_Back">Back</string>
+    <string name="buttonText_Restart">Restart</string>
+    <string name="buttonText_StartGame">start game</string>
 </resources>
