@@ -8,16 +8,14 @@ import android.view.View;
 
 import com.bboehnert.atari_breakout.entites.GameBoard;
 
-import java.util.Observable;
-import java.util.Observer;
-
 /**
  * Class for handling user/game actions related to the game board
  */
-public class GameBoardView extends View implements Observer {
+public class GameBoardView extends View implements DrawListener {
 
     private final TypedArray colors;
     private final DrawController drawController;
+    private final SoundController soundController;
     private GameBoard board;
     private String message;
 
@@ -32,6 +30,9 @@ public class GameBoardView extends View implements Observer {
         this.message = getResources().getString(R.string.gameNotStartedMessage);
         this.colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
         this.drawController = new DrawController(colors);
+
+        this.soundController = new SoundController(context);
+        this.soundController.initAudio();
     }
 
     /**
@@ -41,9 +42,10 @@ public class GameBoardView extends View implements Observer {
      */
     public void initBoard(GameBoard board) {
         this.board = board;
-        this.board.addObserver(this);
+        this.board.setDrawer(this);
         this.board.initComponents();
         this.drawController.setBoard(board);
+        this.soundController.register(board);
     }
 
     @Override
@@ -52,6 +54,7 @@ public class GameBoardView extends View implements Observer {
             return;
         }
 
+        // Show Game Over
         if (!board.isGameStarted()) {
             drawController.drawGameOverScreen(canvas, this.message);
             return;
@@ -79,7 +82,7 @@ public class GameBoardView extends View implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void redraw() {
         invalidate();
     }
 

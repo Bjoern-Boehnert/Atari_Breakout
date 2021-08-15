@@ -55,7 +55,9 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (board == null) {
-            this.board = new GameBoard(view.getWidth(), view.getHeight());
+            this.board = new GameBoard();
+            this.board.setHeight(view.getHeight());
+            this.board.setWidth(view.getWidth());
             this.view.initBoard(board);
         }
     }
