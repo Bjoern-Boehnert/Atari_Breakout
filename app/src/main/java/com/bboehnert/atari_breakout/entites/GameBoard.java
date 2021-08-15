@@ -1,33 +1,60 @@
 package com.bboehnert.atari_breakout.entites;
 
-import java.util.Observable;
+import com.bboehnert.atari_breakout.AudioListener;
+import com.bboehnert.atari_breakout.DrawListener;
 
 /**
  * Class that represents the game board with it's entities
  */
-public class GameBoard extends Observable {
+public class GameBoard {
 
     public enum GameAction {
-        X_Reflection, Y_Reflection, GameWin, GameLose;
+        X_Reflection, Y_Reflection, GameWin, GameLose
 
     }
 
-    private final float width;
-    private final float height;
+    private  float width, height;
+    private DrawListener drawListener;
+    private AudioListener audioListener;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
-    private boolean isStarted = false;
+    private boolean isStarted, isFinished = false;
 
     /**
-     * Constructor
+     * Setter for the width
      *
-     * @param width  is the game board width
-     * @param height is the game board height
+     * @param width of the game board
      */
-    public GameBoard(float width, float height) {
+    public void setWidth(float width) {
         this.width = width;
+    }
+
+    /**
+     * Setter for the height
+     *
+     * @param height of the game board
+     */
+    public void setHeight(float height) {
         this.height = height;
+    }
+
+    /**
+     * Setter for the Drawer
+     *
+     * @param listener is the drawer
+     */
+    public void setDrawer(DrawListener listener) {
+        this.drawListener = listener;
+    }
+
+    /**
+     * Setter for the Audio
+     *
+     * @param listener is the audio player
+     */
+    public void setAudioPlayer(AudioListener listener) {
+        this.audioListener = listener;
     }
 
     /**
@@ -64,8 +91,7 @@ public class GameBoard extends Observable {
                         height / 16 - spacing);
             }
         }
-        setChanged();
-        notifyObservers();
+        drawListener.redraw();
     }
 
     /**
@@ -89,6 +115,8 @@ public class GameBoard extends Observable {
         for (int i = 0; i < bricks.length; i++) {
             if (bricks[i] != null && bricks[i].isIntersecting(ball)) {
                 bricks[i] = null;
+
+                audioListener.playBrickCollision();
                 return true;
             }
         }
@@ -125,6 +153,9 @@ public class GameBoard extends Observable {
             action = GameAction.Y_Reflection;
             float reflectingPos = paddle.getReflectFactor(ball.getX() + ball.getWidth() / 2);
             ball.reflectByPaddle(reflectingPos);
+
+            // Play Audio
+            audioListener.playPaddleCollision();
         }
         return action;
     }
@@ -143,9 +174,11 @@ public class GameBoard extends Observable {
         if (action != null) {
             if (action == GameAction.GameWin) {
                 isStarted = false;
+                isFinished = true;
 
             } else if (action == GameAction.GameLose) {
                 isStarted = false;
+                isFinished = true;
 
             } else if (action == GameAction.X_Reflection) {
                 ball.reflectX();
@@ -155,8 +188,7 @@ public class GameBoard extends Observable {
             }
         }
         ball.move();
-        setChanged();
-        notifyObservers();
+        drawListener.redraw();
     }
 
     /**
@@ -178,8 +210,7 @@ public class GameBoard extends Observable {
         } else {
             paddle.move(xPos);
         }
-        setChanged();
-        notifyObservers();
+        drawListener.redraw();
     }
 
     /**
@@ -187,6 +218,7 @@ public class GameBoard extends Observable {
      */
     public void restartGame() {
         isStarted = true;
+        isFinished = false;
         initComponents();
     }
 
@@ -243,5 +275,6 @@ public class GameBoard extends Observable {
     public float getHeight() {
         return height;
     }
+
 
 }

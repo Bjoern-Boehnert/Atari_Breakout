@@ -1,8 +1,14 @@
 package com.bboehnert.atari_breakout.entites;
 
+import com.bboehnert.atari_breakout.AudioListener;
+import com.bboehnert.atari_breakout.DrawListener;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Class for testing the Game board
@@ -10,12 +16,25 @@ import org.junit.Test;
 
 public class GameBoardTest {
 
+    @Mock
+    private DrawListener drawListener;
+
+    @Mock
+    private AudioListener audioListener;
+
+    @InjectMocks
     private GameBoard gameBoard;
     private final double delta = 1e-5;
 
     @Before
-    public void setUp() throws Exception {
-        gameBoard = new GameBoard(800, 640);
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        gameBoard = new GameBoard();
+        gameBoard.setWidth(800);
+        gameBoard.setHeight(640);
+
+        gameBoard.setAudioPlayer(audioListener);
+        gameBoard.setDrawer(drawListener);
         gameBoard.initComponents();
     }
 
