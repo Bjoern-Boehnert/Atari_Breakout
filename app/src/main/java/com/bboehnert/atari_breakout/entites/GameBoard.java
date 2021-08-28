@@ -1,11 +1,11 @@
 package com.bboehnert.atari_breakout.entites;
 
-import com.bboehnert.atari_breakout.Contract;
+import com.bboehnert.atari_breakout.mvp.Model;
 
 /**
- * Class that represents the game board with it's entities
+ * Class that represents the game board with it's entities. Is the Model in MVP
  */
-public class GameBoard implements Contract.Model, Contract.Model.Drawer {
+public class GameBoard implements Model, Model.Drawer {
 
     public enum GameState {
         Won, Lost, Undecided
@@ -53,12 +53,8 @@ public class GameBoard implements Contract.Model, Contract.Model.Drawer {
         return true;
     }
 
-    /**
-     * Initialize the ball, paddle and bricks in relative sizes to the width and height of
-     * the game board
-     */
     @Override
-    public void initComponents(Contract.Model.DrawListener drawListener) {
+    public void initComponents(Model.DrawListener drawListener) {
 
         // Init Ball
         this.ball = new Ball(width / 2,
@@ -97,8 +93,8 @@ public class GameBoard implements Contract.Model, Contract.Model.Drawer {
     }
 
     @Override
-    public void doGameAction(Contract.Model.DrawListener drawListener,
-                             Contract.Model.AudioListener audioListener) {
+    public void doGameAction(Model.DrawListener drawListener,
+                             Model.AudioListener audioListener) {
 
         if (!isStarted) {
             return;
@@ -137,13 +133,8 @@ public class GameBoard implements Contract.Model, Contract.Model.Drawer {
         drawListener.redraw();
     }
 
-    /**
-     * Move the paddle to a new location on the game board
-     *
-     * @param touchPos of the paddles new position
-     */
     @Override
-    public void movePaddle(float touchPos, Contract.Model.DrawListener drawListener) {
+    public void movePaddle(float touchPos, Model.DrawListener drawListener) {
 
         // Position the paddle always centrally
         float xPos = touchPos - paddle.getWidth() / 2;
@@ -160,9 +151,6 @@ public class GameBoard implements Contract.Model, Contract.Model.Drawer {
         drawListener.redraw();
     }
 
-    /**
-     * Restart the game and init the game entities
-     */
     @Override
     public void restartGame() {
         state = GameState.Undecided;
@@ -170,71 +158,36 @@ public class GameBoard implements Contract.Model, Contract.Model.Drawer {
         gameScore = 0;
     }
 
-    /**
-     * Getter for the ball
-     *
-     * @return the ball
-     */
     @Override
     public Ball getBall() {
         return ball;
     }
 
-    /**
-     * Getter for the Paddle
-     *
-     * @return the paddle
-     */
     @Override
     public Paddle getPaddle() {
         return paddle;
     }
 
-    /**
-     * Getter for the bricks
-     *
-     * @return the bricks as an array
-     */
     @Override
     public Brick[] getBricks() {
         return bricks;
     }
 
-    /**
-     * Getter for game started
-     *
-     * @return a value about the game start
-     */
     @Override
     public boolean isGameStarted() {
         return isStarted;
     }
 
-    /**
-     * Getter for the total width of the game board
-     *
-     * @return the game board width
-     */
     @Override
     public float getWidth() {
         return width;
     }
 
-    /**
-     * Getter for the total height of the game board
-     *
-     * @return the game board height
-     */
     @Override
     public float getHeight() {
         return height;
     }
 
-    /**
-     * Getter for the score of the game
-     *
-     * @return a value about the game score
-     */
     @Override
     public int getGameScore() {
         return gameScore;

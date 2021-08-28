@@ -3,10 +3,12 @@ package com.bboehnert.atari_breakout;
 import android.content.Context;
 import android.media.MediaPlayer;
 
+import com.bboehnert.atari_breakout.mvp.Model;
+
 /**
  * Controller for handling all sound events for the game
  */
-public final class SoundController implements Contract.Model.AudioListener {
+public final class SoundController implements Model.AudioListener {
     private MediaPlayer destroyedBrick, paddleHit;
 
     /**

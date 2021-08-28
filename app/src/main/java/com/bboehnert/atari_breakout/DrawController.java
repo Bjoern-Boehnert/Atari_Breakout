@@ -1,20 +1,19 @@
 package com.bboehnert.atari_breakout;
 
-import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.bboehnert.atari_breakout.entites.Ball;
-import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.entites.Paddle;
+import com.bboehnert.atari_breakout.mvp.Model;
 
 /**
  * Controller for handling all draw events for the game
  */
-public class DrawController {
+public final class DrawController {
 
-    private static Contract.Model.Drawer model;
+    private static Model.Drawer model;
     private static Paint ballPaint;
     private static Paint brickPaint;
     private static Paint paddlePaint;
@@ -25,7 +24,7 @@ public class DrawController {
      *
      * @param colors of the game entities
      */
-    public void setColors(int[] colors) {
+    public static void setColors(int[] colors) {
         // Parsing of the Attributes in gameBoard_Attributes.xml
         backgroundPaint = new Paint();
         backgroundPaint.setColor(colors[0]);
@@ -116,7 +115,7 @@ public class DrawController {
      *
      * @param model is the game board
      */
-    public void setModel(Contract.Model.Drawer model) {
+    public void setModel(Model.Drawer model) {
         this.model = model;
     }
 
@@ -125,7 +124,7 @@ public class DrawController {
      *
      * @return board is the game board
      */
-    public Contract.Model.Drawer getModel() {
+    public Model.Drawer getModel() {
         return model;
     }
 }

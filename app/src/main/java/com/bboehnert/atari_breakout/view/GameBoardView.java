@@ -1,4 +1,4 @@
-package com.bboehnert.atari_breakout;
+package com.bboehnert.atari_breakout.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,14 +7,17 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.bboehnert.atari_breakout.mvp.Presenter;
+import com.bboehnert.atari_breakout.R;
+
 /**
- * Class for handling user/game actions related to the game board
+ * Class for handling user/game actions related to the game board (View)
  */
 public class GameBoardView extends View {
 
     private int[] colorArray;
 
-    private Contract.Presenter presenter;
+    private Presenter presenter;
 
     public GameBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -35,7 +38,7 @@ public class GameBoardView extends View {
         colors.recycle();
     }
 
-    public void setPresenter(Contract.Presenter presenter) {
+    public void setPresenter(Presenter presenter) {
         this.presenter = presenter;
     }
 
@@ -50,6 +53,7 @@ public class GameBoardView extends View {
     public int[] getComponentsColors() {
         return this.colorArray;
     }
+
 
     public void redraw() {
         invalidate();

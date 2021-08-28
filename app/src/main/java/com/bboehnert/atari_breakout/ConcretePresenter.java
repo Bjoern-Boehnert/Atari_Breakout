@@ -3,36 +3,42 @@ package com.bboehnert.atari_breakout;
 import android.graphics.Canvas;
 
 import com.bboehnert.atari_breakout.entites.GameBoard;
+import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.View;
 
-public class Presenter implements Contract.Presenter,
-        Contract.Model.AudioListener,
-        Contract.Model.DrawListener {
+/**
+ * Concrete Presenter Implementation of the Presenter in the MVP Pattern. It shall only manage
+ * the view and model communication.
+ *
+ * Though necessary is that the drawer has to be bound to the model here for displaying the game
+ *
+ */
+public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Presenter,
+        Model.AudioListener,
+        Model.DrawListener {
 
-    private Contract.View view;
-    private Contract.Model model;
+    private View view;
+    private Model model;
 
-    // Considering moving the controllers to the view-layer
     private DrawController drawer;
-    private SoundController sound;
 
-    public Presenter(Contract.View view, Contract.Model model) {
+    public ConcretePresenter(View view, Model model) {
         this.view = view;
         this.model = model;
-
         model.initComponents(this);
-
-        drawer = new DrawController();
-        drawer.setModel((Contract.Model.Drawer) model);
-        drawer.setColors(view.getComponentsColors());
-
-        sound = new SoundController();
     }
 
     @Override
-    public void restartButtonPressed() {
-        //sound.release();
-        //sound.initAudio(this);
+    public void bindDrawerToModel(DrawController drawer) {
+        if(drawer != null){
+            drawer.setModel((Model.Drawer) model);
+            this.drawer=drawer;
+        }
+    }
 
+
+    @Override
+    public void restartButtonPressed() {
         model.restartGame();
         model.initComponents(this);
     }
@@ -44,12 +50,12 @@ public class Presenter implements Contract.Presenter,
 
     @Override
     public void playPaddleCollision() {
-        //sound.playPaddleCollision();
+        view.playPaddleCollision();
     }
 
     @Override
     public void playBrickCollision() {
-        //sound.playBrickCollision();
+        view.playBrickCollision();
     }
 
     @Override

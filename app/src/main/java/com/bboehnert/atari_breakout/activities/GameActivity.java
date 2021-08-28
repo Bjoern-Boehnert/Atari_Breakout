@@ -5,24 +5,33 @@ import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.bboehnert.atari_breakout.Contract;
-import com.bboehnert.atari_breakout.GameBoardView;
-import com.bboehnert.atari_breakout.Presenter;
+import com.bboehnert.atari_breakout.ConcretePresenter;
+import com.bboehnert.atari_breakout.DrawController;
+import com.bboehnert.atari_breakout.view.GameBoardView;
+import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.Presenter;
 import com.bboehnert.atari_breakout.R;
+import com.bboehnert.atari_breakout.SoundController;
 import com.bboehnert.atari_breakout.entites.GameBoard;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 /**
- * Class for handling the Game interactions
+ * Class for handling the Game interactions (View)
  */
-public class GameActivity extends AppCompatActivity implements Contract.View {
+public class GameActivity extends AppCompatActivity implements com.bboehnert.atari_breakout.mvp.View {
+
+    private Presenter presenter;
 
     // View sub component for showing the game board
     private GameBoardView gameBoardView;
-    private Contract.Model board;
 
-    private Contract.Presenter presenter;
+    // Controller
+    private DrawController drawer;
+    private SoundController sound;
+
+    private Model board;
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
@@ -33,8 +42,16 @@ public class GameActivity extends AppCompatActivity implements Contract.View {
                     gameBoardView.getWidth(),
                     gameBoardView.getHeight());
 
-            presenter = new Presenter(this, board);
+            presenter = new ConcretePresenter(this, board);
             this.gameBoardView.setPresenter(presenter);
+
+            drawer = new DrawController();
+            drawer.setColors(gameBoardView.getComponentsColors());
+
+            presenter.bindDrawerToModel(drawer);
+
+            sound = new SoundController();
+            sound.initAudio(this);
         }
 
     }
@@ -47,8 +64,8 @@ public class GameActivity extends AppCompatActivity implements Contract.View {
     }
 
     /**
-     * Button Click Event fo    r restarting the game
-     * Starting the game and initiate drawing
+     * Button Click Event for restarting the game
+     * Using the underlying Presenter from the MVP Pattern
      *
      * @param view is the View
      */
@@ -68,8 +85,13 @@ public class GameActivity extends AppCompatActivity implements Contract.View {
     }
 
     @Override
-    public int[] getComponentsColors() {
-        return gameBoardView.getComponentsColors();
+    public void playPaddleCollision() {
+        sound.playPaddleCollision();
+    }
+
+    @Override
+    public void playBrickCollision() {
+        sound.playBrickCollision();
     }
 
     @Override
