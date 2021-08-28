@@ -1,9 +1,9 @@
 package com.bboehnert.atari_breakout;
 
-import android.graphics.Canvas;
-
 import com.bboehnert.atari_breakout.entites.GameBoard;
 import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
+import com.bboehnert.atari_breakout.mvp.Presenter;
 import com.bboehnert.atari_breakout.mvp.View;
 
 /**
@@ -12,7 +12,7 @@ import com.bboehnert.atari_breakout.mvp.View;
  * <p>
  * Though necessary is that the drawer has to be bound to the model here for displaying the game
  */
-public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Presenter,
+public class ConcretePresenter implements Presenter,
         Model.AudioListener,
         Model.DrawListener {
 
@@ -25,7 +25,6 @@ public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Prese
         model.initComponents(this);
     }
 
-
     @Override
     public void restartButtonPressed() {
         model.restartGame();
@@ -35,11 +34,6 @@ public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Prese
     @Override
     public void touchedPaddle(float x) {
         model.movePaddle(x, this);
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-
     }
 
     @Override
@@ -56,12 +50,11 @@ public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Prese
     public void redraw() {
 
         // Trigger next drawing
-        view.updateViewComponent((Model.Drawer) model);
+        view.updateViewComponent((ModelDisplayable) model);
 
         if (!model.isGameStarted()) {
             view.drawGameOverScreen(getMessage());
         }
-
     }
 
     @Override

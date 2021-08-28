@@ -1,10 +1,5 @@
 package com.bboehnert.atari_breakout.mvp;
 
-import android.graphics.Canvas;
-
-import com.bboehnert.atari_breakout.DrawController;
-import com.bboehnert.atari_breakout.SoundController;
-
 /**
  * Representing the Presenter of the MVP Pattern. It shall cover user interactions effecting
  * the game
@@ -24,11 +19,8 @@ public interface Presenter {
     void touchedPaddle(float x);
 
     /**
-     * Action on getting the view canvas for drawing on it
+     * Action on getting the game action
      *
-     * @param canvas is the drawing surface
      */
-    void onDraw(Canvas canvas);
-
     void doGameActions();
 }

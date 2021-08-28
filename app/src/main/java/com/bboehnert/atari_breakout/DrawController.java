@@ -6,14 +6,14 @@ import android.graphics.Paint;
 
 import com.bboehnert.atari_breakout.entites.Ball;
 import com.bboehnert.atari_breakout.entites.Paddle;
-import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
 
 /**
  * Controller for handling all draw events for the game
  */
 public final class DrawController {
 
-    private static Model.Drawer model;
+    private static ModelDisplayable model;
     private static Paint ballPaint;
     private static Paint brickPaint;
     private static Paint paddlePaint;
@@ -24,7 +24,7 @@ public final class DrawController {
      *
      * @param colors of the game entities
      */
-    public static void setColors(int[] colors) {
+    public void setColors(int[] colors) {
         // Parsing of the Attributes in gameBoard_Attributes.xml
         backgroundPaint = new Paint();
         backgroundPaint.setColor(colors[0]);
@@ -115,7 +115,7 @@ public final class DrawController {
      *
      * @param model is the game board
      */
-    public void setModel(Model.Drawer model) {
+    public void setModel(ModelDisplayable model) {
         this.model = model;
     }
 
@@ -124,7 +124,7 @@ public final class DrawController {
      *
      * @return board is the game board
      */
-    public Model.Drawer getModel() {
+    public ModelDisplayable getModel() {
         return model;
     }
 }

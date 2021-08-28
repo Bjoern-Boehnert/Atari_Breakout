@@ -1,17 +1,18 @@
 package com.bboehnert.atari_breakout.entites;
 
 import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
 
 /**
  * Class that represents the game board with it's entities. Is the Model in MVP
  */
-public class GameBoard implements Model, Model.Drawer {
+public class GameBoard implements Model, ModelDisplayable {
 
     public enum GameState {
         Won, Lost, Undecided
     }
 
-    private final float width, height;
+    private float width, height;
     private Ball ball;
     private Paddle paddle;
     private Brick[] bricks;
@@ -19,16 +20,6 @@ public class GameBoard implements Model, Model.Drawer {
     private int gameScore;
     private GameState state = GameState.Undecided;
 
-    public GameBoard(float width,
-                     float height) {
-
-        this.width = width;
-        this.height = height;
-    }
-
-    /**
-     * Initialize the ball, paddle and bricks
-     */
     private boolean isDestroyBrick() {
         for (int i = 0; i < bricks.length; i++) {
             if (bricks[i] != null && bricks[i].isIntersecting(ball)) {
@@ -156,6 +147,16 @@ public class GameBoard implements Model, Model.Drawer {
         state = GameState.Undecided;
         isStarted = true;
         gameScore = 0;
+    }
+
+    @Override
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    @Override
+    public void setHeight(float height) {
+        this.height = height;
     }
 
     @Override

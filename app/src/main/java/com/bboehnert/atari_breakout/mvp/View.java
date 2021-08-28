@@ -9,7 +9,7 @@ public interface View {
      * update view component for redrawing new model data
      * @param model
      */
-    void updateViewComponent(Model.Drawer model);
+    void updateViewComponent(ModelDisplayable model);
 
     /**
      * play paddle sound

@@ -6,13 +6,13 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.bboehnert.atari_breakout.ConcretePresenter;
-import com.bboehnert.atari_breakout.DrawController;
-import com.bboehnert.atari_breakout.view.GameBoardView;
-import com.bboehnert.atari_breakout.mvp.Model;
-import com.bboehnert.atari_breakout.mvp.Presenter;
 import com.bboehnert.atari_breakout.R;
 import com.bboehnert.atari_breakout.SoundController;
 import com.bboehnert.atari_breakout.entites.GameBoard;
+import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
+import com.bboehnert.atari_breakout.mvp.Presenter;
+import com.bboehnert.atari_breakout.view.GameBoardView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,33 +26,23 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     // View sub component for showing the game board
     private GameBoardView gameBoardView;
 
-    // Controller
-    private DrawController drawer;
     private SoundController sound;
-
-    private Model board;
+    private boolean isSizeInitialized;
 
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
 
         // Init size, when GameBoard is
-        if (board == null) {
-            board = new GameBoard(
-                    gameBoardView.getWidth(),
-                    gameBoardView.getHeight());
+        if (!isSizeInitialized) {
 
-            drawer = new DrawController();
-            drawer.setColors(gameBoardView.getComponentsColors());
-            gameBoardView.setDrawer(drawer);
-
+            Model board = new GameBoard();
+            board.setWidth(gameBoardView.getWidth());
+            board.setHeight(gameBoardView.getHeight());
             presenter = new ConcretePresenter(this, board);
-            this.gameBoardView.setPresenter(presenter);
+            gameBoardView.setPresenter(presenter);
 
-            //presenter.bindDrawerToModel(drawer);
-
-            sound = new SoundController();
-            sound.initAudio(this);
+            isSizeInitialized = true;
         }
 
     }
@@ -61,7 +51,10 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-        this.gameBoardView = findViewById(R.id.gameBoard);
+        gameBoardView = findViewById(R.id.gameBoard);
+
+        sound = new SoundController();
+        sound.initAudio(this);
     }
 
     /**
@@ -81,7 +74,7 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     }
 
     @Override
-    public void updateViewComponent(Model.Drawer model) {
+    public void updateViewComponent(ModelDisplayable model) {
         gameBoardView.redraw(model);
     }
 

@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.bboehnert.atari_breakout.DrawController;
-import com.bboehnert.atari_breakout.mvp.Model;
+import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
 import com.bboehnert.atari_breakout.mvp.Presenter;
 import com.bboehnert.atari_breakout.R;
 
@@ -16,8 +16,6 @@ import com.bboehnert.atari_breakout.R;
  * Class for handling user/game actions related to the game board (View)
  */
 public class GameBoardView extends View {
-
-    private int[] colorArray;
 
     private Presenter presenter;
     private DrawController drawer;
@@ -29,18 +27,17 @@ public class GameBoardView extends View {
 
         // Set Colors
         TypedArray colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
-        int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
-        int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
-        int brickColor = colors.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
-        int paddleColor = colors.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
 
-        colorArray = new int[4];
-        colorArray[0] = backgroundColor;
-        colorArray[1] = ballColor;
-        colorArray[2] = brickColor;
-        colorArray[3] = paddleColor;
-
+        int[] colorArray = new int[4];
+        colorArray[0] = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
+        colorArray[1] = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
+        colorArray[2] = colors.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
+        colorArray[3] = colors.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
         colors.recycle();
+
+        drawer = new DrawController();
+        drawer.setColors(colorArray);
+
     }
 
     public void setPresenter(Presenter presenter) {
@@ -50,7 +47,7 @@ public class GameBoardView extends View {
     @Override
     public void onDraw(Canvas canvas) {
 
-        if (presenter == null || drawer == null || drawer.getModel() == null) {
+        if (presenter == null) {
             return;
         }
 
@@ -68,23 +65,13 @@ public class GameBoardView extends View {
     public void drawGameOver(String message) {
         isGameOver = true;
         this.message = message;
-
         invalidate();
     }
 
-    public int[] getComponentsColors() {
-        return this.colorArray;
-    }
-
-    public void redraw(Model.Drawer model) {
+    public void redraw(ModelDisplayable model) {
         isGameOver = false;
         drawer.setModel(model);
-
         invalidate();
-    }
-
-    public void setDrawer(DrawController drawer) {
-        this.drawer = drawer;
     }
 
 }
