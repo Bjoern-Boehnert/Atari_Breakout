@@ -9,31 +9,20 @@ import com.bboehnert.atari_breakout.mvp.View;
 /**
  * Concrete Presenter Implementation of the Presenter in the MVP Pattern. It shall only manage
  * the view and model communication.
- *
+ * <p>
  * Though necessary is that the drawer has to be bound to the model here for displaying the game
- *
  */
 public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Presenter,
         Model.AudioListener,
         Model.DrawListener {
 
-    private View view;
-    private Model model;
-
-    private DrawController drawer;
+    private final View view;
+    private final Model model;
 
     public ConcretePresenter(View view, Model model) {
         this.view = view;
         this.model = model;
         model.initComponents(this);
-    }
-
-    @Override
-    public void bindDrawerToModel(DrawController drawer) {
-        if(drawer != null){
-            drawer.setModel((Model.Drawer) model);
-            this.drawer=drawer;
-        }
     }
 
 
@@ -49,6 +38,11 @@ public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Prese
     }
 
     @Override
+    public void onDraw(Canvas canvas) {
+
+    }
+
+    @Override
     public void playPaddleCollision() {
         view.playPaddleCollision();
     }
@@ -60,25 +54,18 @@ public class ConcretePresenter implements com.bboehnert.atari_breakout.mvp.Prese
 
     @Override
     public void redraw() {
+
         // Trigger next drawing
-        view.updateViewComponent();
+        view.updateViewComponent((Model.Drawer) model);
+
+        if (!model.isGameStarted()) {
+            view.drawGameOverScreen(getMessage());
+        }
+
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        if (drawer == null || drawer.getModel() == null) {
-            return;
-        }
-
-        if (!model.isGameStarted()) {
-            drawer.drawGameOverScreen(canvas, getMessage());
-            return;
-        }
-
-        drawer.drawGameObjects(canvas);
-        drawer.drawGameScore(canvas);
-
-        //Draw next Frame
+    public void doGameActions() {
         model.doGameAction(this, this);
     }
 

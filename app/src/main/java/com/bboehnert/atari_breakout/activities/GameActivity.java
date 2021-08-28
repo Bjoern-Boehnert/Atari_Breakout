@@ -42,13 +42,14 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
                     gameBoardView.getWidth(),
                     gameBoardView.getHeight());
 
+            drawer = new DrawController();
+            drawer.setColors(gameBoardView.getComponentsColors());
+            gameBoardView.setDrawer(drawer);
+
             presenter = new ConcretePresenter(this, board);
             this.gameBoardView.setPresenter(presenter);
 
-            drawer = new DrawController();
-            drawer.setColors(gameBoardView.getComponentsColors());
-
-            presenter.bindDrawerToModel(drawer);
+            //presenter.bindDrawerToModel(drawer);
 
             sound = new SoundController();
             sound.initAudio(this);
@@ -80,8 +81,8 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     }
 
     @Override
-    public void updateViewComponent() {
-        gameBoardView.redraw();
+    public void updateViewComponent(Model.Drawer model) {
+        gameBoardView.redraw(model);
     }
 
     @Override
@@ -107,6 +108,11 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     @Override
     public String getLostMessage() {
         return getResources().getString(R.string.gameLostMessage);
+    }
+
+    @Override
+    public void drawGameOverScreen(String message) {
+        gameBoardView.drawGameOver(message);
     }
 
     /**

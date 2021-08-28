@@ -3,6 +3,7 @@ package com.bboehnert.atari_breakout.mvp;
 import android.graphics.Canvas;
 
 import com.bboehnert.atari_breakout.DrawController;
+import com.bboehnert.atari_breakout.SoundController;
 
 /**
  * Representing the Presenter of the MVP Pattern. It shall cover user interactions effecting
@@ -29,11 +30,5 @@ public interface Presenter {
      */
     void onDraw(Canvas canvas);
 
-    /**
-     * Action on binding the Drawer class to the Model. So the Drawer instance know the actual
-     * model data
-     *
-     * @param drawer to bind the model for
-     */
-    void bindDrawerToModel(DrawController drawer);
+    void doGameActions();
 }

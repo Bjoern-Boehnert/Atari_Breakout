@@ -7,6 +7,8 @@ import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.bboehnert.atari_breakout.DrawController;
+import com.bboehnert.atari_breakout.mvp.Model;
 import com.bboehnert.atari_breakout.mvp.Presenter;
 import com.bboehnert.atari_breakout.R;
 
@@ -18,6 +20,9 @@ public class GameBoardView extends View {
     private int[] colorArray;
 
     private Presenter presenter;
+    private DrawController drawer;
+    private String message;
+    private boolean isGameOver;
 
     public GameBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
@@ -43,21 +48,43 @@ public class GameBoardView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        if (presenter != null) {
-            presenter.onDraw(canvas);
+    public void onDraw(Canvas canvas) {
+
+        if (presenter == null || drawer == null || drawer.getModel() == null) {
+            return;
         }
 
+        if (isGameOver) {
+            drawer.drawGameOverScreen(canvas, message);
+            return;
+        }
+        drawer.drawGameObjects(canvas);
+        drawer.drawGameScore(canvas);
+
+        presenter.doGameActions();
+
+    }
+
+    public void drawGameOver(String message) {
+        isGameOver = true;
+        this.message = message;
+
+        invalidate();
     }
 
     public int[] getComponentsColors() {
         return this.colorArray;
     }
 
+    public void redraw(Model.Drawer model) {
+        isGameOver = false;
+        drawer.setModel(model);
 
-    public void redraw() {
         invalidate();
     }
 
+    public void setDrawer(DrawController drawer) {
+        this.drawer = drawer;
+    }
 
 }

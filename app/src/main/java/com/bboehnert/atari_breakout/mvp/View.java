@@ -7,8 +7,9 @@ public interface View {
 
     /**
      * update view component for redrawing new model data
+     * @param model
      */
-    void updateViewComponent();
+    void updateViewComponent(Model.Drawer model);
 
     /**
      * play paddle sound
@@ -40,4 +41,6 @@ public interface View {
      * @return the message
      */
     String getLostMessage();
+
+    void drawGameOverScreen(String message);
 }
