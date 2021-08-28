@@ -12,9 +12,9 @@ import com.bboehnert.atari_breakout.entites.Paddle;
 /**
  * Controller for handling all draw events for the game
  */
-public final class DrawController {
+public class DrawController {
 
-    private static GameBoard board;
+    private static Contract.Model.Drawer model;
     private static Paint ballPaint;
     private static Paint brickPaint;
     private static Paint paddlePaint;
@@ -25,25 +25,19 @@ public final class DrawController {
      *
      * @param colors of the game entities
      */
-    public static void setColors(TypedArray colors) {
+    public void setColors(int[] colors) {
         // Parsing of the Attributes in gameBoard_Attributes.xml
-        int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
-        int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
-        int brickColor = colors.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
-        int paddleColor = colors.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
-        colors.recycle();
+        backgroundPaint = new Paint();
+        backgroundPaint.setColor(colors[0]);
 
         ballPaint = new Paint();
-        ballPaint.setColor(ballColor);
+        ballPaint.setColor(colors[1]);
 
         brickPaint = new Paint();
-        brickPaint.setColor(brickColor);
+        brickPaint.setColor(colors[2]);
 
         paddlePaint = new Paint();
-        paddlePaint.setColor(paddleColor);
-
-        backgroundPaint = new Paint();
-        backgroundPaint.setColor(backgroundColor);
+        paddlePaint.setColor(colors[3]);
     }
 
     /**
@@ -51,29 +45,29 @@ public final class DrawController {
      *
      * @param canvas to draw the game objects
      */
-    public static void drawGameObjects(Canvas canvas) {
+    public void drawGameObjects(Canvas canvas) {
         canvas.drawPaint(backgroundPaint);
 
-        Ball ball = board.getBall();
+        Ball ball = model.getBall();
         canvas.drawRect(ball.getX(),
                 ball.getY(),
                 ball.getX() + ball.getWidth(),
                 ball.getY() + ball.getHeight(),
                 ballPaint);
 
-        Paddle paddle = board.getPaddle();
+        Paddle paddle = model.getPaddle();
         canvas.drawRect(paddle.getX(),
                 paddle.getY(),
                 paddle.getX() + paddle.getWidth(),
                 paddle.getY() + paddle.getHeight(),
                 paddlePaint);
 
-        for (int i = 0; i < board.getBricks().length; i++) {
-            if (board.getBricks()[i] != null) {
-                canvas.drawRect(board.getBricks()[i].getX(),
-                        board.getBricks()[i].getY(),
-                        board.getBricks()[i].getX() + board.getBricks()[i].getWidth(),
-                        board.getBricks()[i].getY() + board.getBricks()[i].getHeight(),
+        for (int i = 0; i < model.getBricks().length; i++) {
+            if (model.getBricks()[i] != null) {
+                canvas.drawRect(model.getBricks()[i].getX(),
+                        model.getBricks()[i].getY(),
+                        model.getBricks()[i].getX() + model.getBricks()[i].getWidth(),
+                        model.getBricks()[i].getY() + model.getBricks()[i].getHeight(),
                         brickPaint);
             }
         }
@@ -84,15 +78,15 @@ public final class DrawController {
      *
      * @param canvas to draw the game objects
      */
-    public static void drawGameScore(Canvas canvas) {
+    public void drawGameScore(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setTextSize(board.getWidth() / 16);
+        paint.setTextSize(model.getWidth() / 16);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setColor(Color.BLACK);
         canvas.drawText(
-                "Score: " + board.getGameScore(),
-                board.getWidth() / 8,
-                board.getWidth() / 8,
+                "Score: " + model.getGameScore(),
+                model.getWidth() / 8,
+                model.getWidth() / 8,
                 paint);
 
     }
@@ -103,27 +97,27 @@ public final class DrawController {
      * @param canvas  to draw the game over
      * @param message is the text on finished game
      */
-    public static void drawGameOverScreen(Canvas canvas, String message) {
+    public void drawGameOverScreen(Canvas canvas, String message) {
         canvas.drawPaint(backgroundPaint);
 
         Paint paint = new Paint();
-        paint.setTextSize(board.getWidth() / 8);
+        paint.setTextSize(model.getWidth() / 8);
         paint.setTextAlign(Paint.Align.CENTER);
         paint.setColor(Color.BLUE);
         canvas.drawText(
                 message,
-                board.getWidth() / 2,
-                board.getHeight() / 2,
+                model.getWidth() / 2,
+                model.getHeight() / 2,
                 paint);
     }
 
     /**
      * Setter for the board
      *
-     * @param gameBoard is the game board
+     * @param model is the game board
      */
-    public static void setBoard(GameBoard gameBoard) {
-        board = gameBoard;
+    public void setModel(Contract.Model.Drawer model) {
+        this.model = model;
     }
 
     /**
@@ -131,7 +125,7 @@ public final class DrawController {
      *
      * @return board is the game board
      */
-    public static GameBoard getBoard() {
-        return board;
+    public Contract.Model.Drawer getModel() {
+        return model;
     }
 }

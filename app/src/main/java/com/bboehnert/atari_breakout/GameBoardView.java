@@ -3,84 +3,54 @@ package com.bboehnert.atari_breakout;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
-
-import com.bboehnert.atari_breakout.entites.GameBoard;
 
 /**
  * Class for handling user/game actions related to the game board
  */
-public class GameBoardView extends View implements DrawListener {
+public class GameBoardView extends View {
 
-    private final TypedArray colors;
-    private GameBoard board;
-    private String message;
+    private int[] colorArray;
 
-    /**
-     * Constructor
-     *
-     * @param context      of the app
-     * @param attributeSet for getting the component custom colors
-     */
+    private Contract.Presenter presenter;
+
     public GameBoardView(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
-        this.message = getResources().getString(R.string.gameNotStartedMessage);
-        this.colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
-        DrawController.setColors(colors);
+
+        // Set Colors
+        TypedArray colors = context.obtainStyledAttributes(attributeSet, R.styleable.GameBoardView);
+        int backgroundColor = colors.getInt(R.styleable.GameBoardView_backgroundColor, Color.GRAY);
+        int ballColor = colors.getColor(R.styleable.GameBoardView_ballColor, Color.BLUE);
+        int brickColor = colors.getInt(R.styleable.GameBoardView_brickColor, Color.RED);
+        int paddleColor = colors.getInt(R.styleable.GameBoardView_paddleColor, Color.GREEN);
+
+        colorArray = new int[4];
+        colorArray[0] = backgroundColor;
+        colorArray[1] = ballColor;
+        colorArray[2] = brickColor;
+        colorArray[3] = paddleColor;
+
+        colors.recycle();
     }
 
-    /**
-     * Init the board and drawer
-     *
-     * @param board is the game board
-     */
-    public void initBoard(GameBoard board) {
-        this.board = board;
-        this.board.setDrawer(this);
-        this.board.initComponents();
-        DrawController.setBoard(board);
+    public void setPresenter(Contract.Presenter presenter) {
+        this.presenter = presenter;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        if (DrawController.getBoard() == null) {
-            return;
+        if (presenter != null) {
+            presenter.onDraw(canvas);
         }
-
-        // Show Game Over
-        if (!board.isGameStarted()) {
-            DrawController.drawGameOverScreen(canvas, this.message);
-            return;
-        }
-
-        // Draw game obj
-        DrawController.drawGameObjects(canvas);
-        DrawController.drawGameScore(canvas);
-
-        GameBoard.GameAction action = board.getCurrentAction();
-        board.processAction(action);
-
-        // Get Game Over Message
-        this.message = getMessage(action);
 
     }
 
-    /**
-     * Get the text of the action
-     *
-     * @param action is the current game board action
-     */
-    private String getMessage(GameBoard.GameAction action) {
-        if (action == GameBoard.GameAction.GameWin) {
-            return getResources().getString(R.string.gameWonMessage);
-        } else if (action == GameBoard.GameAction.GameLose) {
-            return getResources().getString(R.string.gameLostMessage);
-        }
-        return null;
+    public int[] getComponentsColors() {
+        return this.colorArray;
     }
 
-    @Override
     public void redraw() {
         invalidate();
     }
