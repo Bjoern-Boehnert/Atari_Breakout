@@ -29,22 +29,19 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     private SoundController sound;
     private boolean isSizeInitialized;
 
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
 
-        // Init size, when GameBoard is
+        // Init size
         if (!isSizeInitialized) {
 
             Model board = new GameBoard();
             board.setWidth(gameBoardView.getWidth());
             board.setHeight(gameBoardView.getHeight());
             presenter = new ConcretePresenter(this, board);
-            gameBoardView.setPresenter(presenter);
 
             isSizeInitialized = true;
         }
-
     }
 
     @Override
@@ -52,6 +49,7 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         gameBoardView = findViewById(R.id.gameBoard);
+        gameBoardView.finishDrawing = () -> presenter.doGameActions();
 
         sound = new SoundController();
         sound.initAudio(this);
@@ -76,6 +74,7 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     @Override
     public void updateViewComponent(ModelDisplayable model) {
         gameBoardView.redraw(model);
+        gameBoardView.invalidate();
     }
 
     @Override
@@ -104,8 +103,9 @@ public class GameActivity extends AppCompatActivity implements com.bboehnert.ata
     }
 
     @Override
-    public void drawGameOverScreen(String message) {
-        gameBoardView.drawGameOver(message);
+    public void drawGameOverScreen(ModelDisplayable model, String message) {
+        gameBoardView.drawGameOver(model, message);
+        gameBoardView.invalidate();
     }
 
     /**

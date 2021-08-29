@@ -7,6 +7,7 @@ public interface View {
 
     /**
      * update view component for redrawing new model data
+     *
      * @param model
      */
     void updateViewComponent(ModelDisplayable model);
@@ -42,5 +43,5 @@ public interface View {
      */
     String getLostMessage();
 
-    void drawGameOverScreen(String message);
+    void drawGameOverScreen(ModelDisplayable model, String message);
 }

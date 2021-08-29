@@ -49,12 +49,12 @@ public class ConcretePresenter implements Presenter,
     @Override
     public void redraw() {
 
-        // Trigger next drawing
-        view.updateViewComponent((ModelDisplayable) model);
-
         if (!model.isGameStarted()) {
-            view.drawGameOverScreen(getMessage());
+            view.drawGameOverScreen(model, getMessage());
+            return;
         }
+        // Trigger next drawing
+        view.updateViewComponent(model);
     }
 
     @Override

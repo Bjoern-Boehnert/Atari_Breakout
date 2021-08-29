@@ -1,4 +1,4 @@
-package com.bboehnert.atari_breakout;
+package com.bboehnert.atari_breakout.view;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,7 +11,7 @@ import com.bboehnert.atari_breakout.mvp.ModelDisplayable;
 /**
  * Controller for handling all draw events for the game
  */
-public final class DrawController {
+final class DrawController {
 
     private static ModelDisplayable model;
     private static Paint ballPaint;
